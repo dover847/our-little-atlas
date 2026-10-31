@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: our-little-atlas
+    runtime: node
+    plan: starter
+    buildCommand: npm install --omit=dev
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATA_FILE
+        value: /data/atlas-data.json
+      - key: ATLAS_PASSWORD
+        sync: false
+      - key: ATLAS_SECRET
+        generateValue: true
+    disk:
+      name: atlas-notes
+      mountPath: /data
+      sizeGB: 1

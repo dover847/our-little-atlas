@@ -1,0 +1,434 @@
+[
+  {
+    "id": 1,
+    "category": "Mind Experiments",
+    "title": "The Abstract Word Experiment",
+    "description": "Choose a word like freedom, home, intimacy or infinity. Define it independently, then compare."
+  },
+  {
+    "id": 2,
+    "category": "Mind Experiments",
+    "title": "The Interpretation Mirror",
+    "description": "Write an ambiguous sentence; the other offers three interpretations before the intended meaning is revealed."
+  },
+  {
+    "id": 3,
+    "category": "Mind Experiments",
+    "title": "The Prediction Laboratory",
+    "description": "Predict each other's answer to a question, then reveal and discuss surprises."
+  },
+  {
+    "id": 4,
+    "category": "Mind Experiments",
+    "title": "The Impossible Question",
+    "description": "Invent a philosophical dilemma; defend opposing positions, then switch sides."
+  },
+  {
+    "id": 5,
+    "category": "Mind Experiments",
+    "title": "The Proposition Revision",
+    "description": "Make a bold claim, find an exception, and rewrite it more precisely together."
+  },
+  {
+    "id": 6,
+    "category": "Mind Experiments",
+    "title": "The Consciousness Exchange",
+    "description": "Describe an ordinary experience from inside your mind, including sensations and interpretations."
+  },
+  {
+    "id": 7,
+    "category": "Mind Experiments",
+    "title": "The Recognition Challenge",
+    "description": "Each describe five patterns you notice in the other; confirm, correct or complicate them."
+  },
+  {
+    "id": 8,
+    "category": "Mind Experiments",
+    "title": "The Belief Laboratory",
+    "description": "Construct the strongest argument against a belief you hold, then see what changes."
+  },
+  {
+    "id": 9,
+    "category": "Mind Experiments",
+    "title": "The Alternate Self",
+    "description": "Imagine who you might have become under a different life circumstance."
+  },
+  {
+    "id": 10,
+    "category": "Mind Experiments",
+    "title": "The Question Behind the Question",
+    "description": "Ask an ordinary question and explore what deeper question it contains."
+  },
+  {
+    "id": 11,
+    "category": "Writing & Creation",
+    "title": "The Two-Mind Story",
+    "description": "Alternate three sentences each, without controlling the other's plot decisions."
+  },
+  {
+    "id": 12,
+    "category": "Writing & Creation",
+    "title": "The Parallel Poems",
+    "description": "Write poems independently using the same title; compare imagery and meaning."
+  },
+  {
+    "id": 13,
+    "category": "Writing & Creation",
+    "title": "The Impossible Civilization",
+    "description": "Invent a country with its own laws, customs, myths and holidays."
+  },
+  {
+    "id": 14,
+    "category": "Writing & Creation",
+    "title": "The Private Dictionary",
+    "description": "Invent words for experiences ordinary language cannot quite describe."
+  },
+  {
+    "id": 15,
+    "category": "Writing & Creation",
+    "title": "The Bilingual Poetry Exchange",
+    "description": "Translate a short passage and compare what survives or changes."
+  },
+  {
+    "id": 16,
+    "category": "Writing & Creation",
+    "title": "The Future Museum",
+    "description": "Create labels for imaginary exhibits from a shared future."
+  },
+  {
+    "id": 17,
+    "category": "Writing & Creation",
+    "title": "The Two-Person Novel",
+    "description": "Take turns writing and editing one short chapter each week."
+  },
+  {
+    "id": 18,
+    "category": "Writing & Creation",
+    "title": "The Secret Character",
+    "description": "Invent two characters and put them in one shared story."
+  },
+  {
+    "id": 19,
+    "category": "Writing & Creation",
+    "title": "The Alternate Ending",
+    "description": "One writes a scene; the other creates two unexpected endings."
+  },
+  {
+    "id": 20,
+    "category": "Writing & Creation",
+    "title": "The Emotional Postcard",
+    "description": "Describe your day as a landscape, weather pattern or fictional postcard."
+  },
+  {
+    "id": 21,
+    "category": "Two Places, One Moment",
+    "title": "The Synchronized Café",
+    "description": "Visit cafés at an agreed time and share the sights, drinks and conversation."
+  },
+  {
+    "id": 22,
+    "category": "Two Places, One Moment",
+    "title": "The Same-Moment Photograph",
+    "description": "At an agreed time, each take a photo and interpret the other's image."
+  },
+  {
+    "id": 23,
+    "category": "Two Places, One Moment",
+    "title": "The Parallel Cooking Challenge",
+    "description": "Cook versions of the same dish or ingredient and compare."
+  },
+  {
+    "id": 24,
+    "category": "Two Places, One Moment",
+    "title": "The Sunset Exchange",
+    "description": "Watch the sky on the same day and exchange a photograph or description."
+  },
+  {
+    "id": 25,
+    "category": "Two Places, One Moment",
+    "title": "The Live Walk",
+    "description": "Take walks while calling or sending voice notes; share one discovery."
+  },
+  {
+    "id": 26,
+    "category": "Two Places, One Moment",
+    "title": "The Virtual Museum",
+    "description": "Explore an online museum together; select three works each."
+  },
+  {
+    "id": 27,
+    "category": "Two Places, One Moment",
+    "title": "The Bookstore Expedition",
+    "description": "Find books you would choose for each other and explain why."
+  },
+  {
+    "id": 28,
+    "category": "Two Places, One Moment",
+    "title": "The One-Object Treasure Hunt",
+    "description": "Choose a theme and find three examples around you."
+  },
+  {
+    "id": 29,
+    "category": "Two Places, One Moment",
+    "title": "The Same Recipe, Different Hands",
+    "description": "Follow identical instructions and compare your personal touches."
+  },
+  {
+    "id": 30,
+    "category": "Two Places, One Moment",
+    "title": "The Ordinary Day Documentary",
+    "description": "Record five little moments from your day as a visual diary."
+  },
+  {
+    "id": 31,
+    "category": "Games & Nonsense",
+    "title": "The Terrible Art Competition",
+    "description": "Draw the same absurd subject in five minutes; the worse the better."
+  },
+  {
+    "id": 32,
+    "category": "Games & Nonsense",
+    "title": "The Five-Second Choice",
+    "description": "Ask unusual either-or questions and answer instantly."
+  },
+  {
+    "id": 33,
+    "category": "Games & Nonsense",
+    "title": "The One-Sentence Laugh Challenge",
+    "description": "Try to make each other laugh using only one sentence."
+  },
+  {
+    "id": 34,
+    "category": "Games & Nonsense",
+    "title": "The Secret Prediction Game",
+    "description": "Guess how the other would react to unlikely situations."
+  },
+  {
+    "id": 35,
+    "category": "Games & Nonsense",
+    "title": "Online Chess",
+    "description": "Play a casual match and discuss your thinking afterward."
+  },
+  {
+    "id": 36,
+    "category": "Games & Nonsense",
+    "title": "GeoGuessr Adventure",
+    "description": "Explore unfamiliar places and compare geography clues."
+  },
+  {
+    "id": 37,
+    "category": "Games & Nonsense",
+    "title": "Codenames Duet",
+    "description": "Work together to identify words from limited clues."
+  },
+  {
+    "id": 38,
+    "category": "Games & Nonsense",
+    "title": "Online Escape Room",
+    "description": "Solve a virtual mystery by combining clues."
+  },
+  {
+    "id": 39,
+    "category": "Games & Nonsense",
+    "title": "Karaoke Exchange",
+    "description": "Choose surprise songs and share short recordings."
+  },
+  {
+    "id": 40,
+    "category": "Games & Nonsense",
+    "title": "The Secret Language",
+    "description": "Invent codes, symbols or phrases understood by only you two."
+  },
+  {
+    "id": 41,
+    "category": "Games & Nonsense",
+    "title": "The Mystery Envelope",
+    "description": "Prepare three clues leading to a surprise answer."
+  },
+  {
+    "id": 42,
+    "category": "Games & Nonsense",
+    "title": "The Imaginary Courtroom",
+    "description": "Put an absurd proposition on trial and argue both sides."
+  },
+  {
+    "id": 43,
+    "category": "Closeness & Affection",
+    "title": "The Invisible Gift",
+    "description": "Describe a gift that cannot be purchased: an experience or impossible moment."
+  },
+  {
+    "id": 44,
+    "category": "Closeness & Affection",
+    "title": "The Three Truths",
+    "description": "Share one joy, one challenge and one thing you look forward to."
+  },
+  {
+    "id": 45,
+    "category": "Closeness & Affection",
+    "title": "The Quiet Call",
+    "description": "Stay on a call while doing your own activities, without needing constant conversation."
+  },
+  {
+    "id": 46,
+    "category": "Closeness & Affection",
+    "title": "The Unsent Letter",
+    "description": "Write a letter you may choose to exchange, without any obligation."
+  },
+  {
+    "id": 47,
+    "category": "Closeness & Affection",
+    "title": "The Emotional Weather Report",
+    "description": "Describe your feelings as weather, seasons or landscapes."
+  },
+  {
+    "id": 48,
+    "category": "Closeness & Affection",
+    "title": "The Appreciation Exchange",
+    "description": "Share one small thing you genuinely appreciated recently."
+  },
+  {
+    "id": 49,
+    "category": "Closeness & Affection",
+    "title": "The Memory Interpretation",
+    "description": "Describe the same shared moment independently, then compare."
+  },
+  {
+    "id": 50,
+    "category": "Closeness & Affection",
+    "title": "The Comfort Menu",
+    "description": "List what helps when tired, stressed, excited or quiet."
+  },
+  {
+    "id": 51,
+    "category": "Closeness & Affection",
+    "title": "The Twenty-Four Registers",
+    "description": "Explore different forms of affection and what each means to you."
+  },
+  {
+    "id": 52,
+    "category": "Closeness & Affection",
+    "title": "The Voluntary Closeness Check-In",
+    "description": "Discuss what feels good and what small gesture would be welcome."
+  },
+  {
+    "id": 53,
+    "category": "Music, Art & Culture",
+    "title": "The Emotional Soundtrack",
+    "description": "Exchange a song and guess why it was chosen."
+  },
+  {
+    "id": 54,
+    "category": "Music, Art & Culture",
+    "title": "The Shared Playlist",
+    "description": "Build a playlist alternating songs that tell a story."
+  },
+  {
+    "id": 55,
+    "category": "Music, Art & Culture",
+    "title": "The Film Night",
+    "description": "Watch the same film or episode and compare reactions."
+  },
+  {
+    "id": 56,
+    "category": "Music, Art & Culture",
+    "title": "The Art Interpretation Duel",
+    "description": "Interpret an artwork independently before reading about it."
+  },
+  {
+    "id": 57,
+    "category": "Music, Art & Culture",
+    "title": "The Cultural Exchange",
+    "description": "Share a childhood reference, custom, food or tradition."
+  },
+  {
+    "id": 58,
+    "category": "Music, Art & Culture",
+    "title": "The Photograph Exhibition",
+    "description": "Curate five photos from your lives with exhibit titles."
+  },
+  {
+    "id": 59,
+    "category": "Music, Art & Culture",
+    "title": "The Sound of My Day",
+    "description": "Record a daily sound and have the other guess its origin."
+  },
+  {
+    "id": 60,
+    "category": "Music, Art & Culture",
+    "title": "The Shared Reading Room",
+    "description": "Read the same short text and compare interpretations."
+  },
+  {
+    "id": 61,
+    "category": "Music, Art & Culture",
+    "title": "The Soundtrack to a Memory",
+    "description": "Choose music that would accompany a personal memory in a film."
+  },
+  {
+    "id": 62,
+    "category": "Music, Art & Culture",
+    "title": "The Creative Classroom",
+    "description": "Take turns teaching each other something you enjoy."
+  },
+  {
+    "id": 63,
+    "category": "Growing Together",
+    "title": "The 100 Discoveries Project",
+    "description": "Collect a hundred things learned through shared experiments."
+  },
+  {
+    "id": 64,
+    "category": "Growing Together",
+    "title": "The One-Year Experiment",
+    "description": "Create a monthly ritual and observe how answers change."
+  },
+  {
+    "id": 65,
+    "category": "Growing Together",
+    "title": "The Shared Time Capsule",
+    "description": "Save questions, predictions and photos for a future date."
+  },
+  {
+    "id": 66,
+    "category": "Growing Together",
+    "title": "The Future Museum Archive",
+    "description": "Keep adding imagined artifacts from possible futures."
+  },
+  {
+    "id": 67,
+    "category": "Growing Together",
+    "title": "The Reciprocal Classroom",
+    "description": "Teach one another a small lesson each week."
+  },
+  {
+    "id": 68,
+    "category": "Growing Together",
+    "title": "The Question of the Week",
+    "description": "Answer one question independently and compare at week's end."
+  },
+  {
+    "id": 69,
+    "category": "Growing Together",
+    "title": "The Anniversary Letters",
+    "description": "Write letters for a one-year or ten-year anniversary."
+  },
+  {
+    "id": 70,
+    "category": "Growing Together",
+    "title": "The Shared Atlas",
+    "description": "Map your imaginary places, favorite ideas and shared memories."
+  },
+  {
+    "id": 71,
+    "category": "Growing Together",
+    "title": "The Monthly Adventure",
+    "description": "Alternate choosing one unusual shared activity each month."
+  },
+  {
+    "id": 72,
+    "category": "Growing Together",
+    "title": "The Little Book of Us",
+    "description": "Collect favorite creative pieces, jokes and discoveries."
+  }
+]
