@@ -103,6 +103,8 @@ http.createServer(async(req,res)=>{
   if(photo===null)return send(res,400,{error:'Photo must be a small valid JPEG, PNG or WebP image'});
   if(!Number.isFinite(openTime)||openTime<=Date.now()+60000||openTime>Date.now()+20*365.25*86400000)return send(res,400,{error:'Choose an opening date in the future (up to 20 years)'});
   if((state.capsules||[]).length>=200)return send(res,400,{error:'Time capsule limit reached'});
+  const photoBytes=(state.capsules||[]).reduce((sum,x)=>sum+(typeof x.photo==='string'?x.photo.length:0),0);
+  if(photo&&photoBytes+photo.length>5000000)return send(res,400,{error:'Test photo storage is full. Please wait for durable photo storage.'});
   mutate(()=>{state.capsules??=[];state.capsules.unshift({id:crypto.randomUUID(),who,recipient,mode,title,message,photo,openAt:new Date(openTime).toISOString(),at:new Date().toISOString()})});
   return send(res,200,{ok:true});
  }
