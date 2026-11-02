@@ -15,6 +15,17 @@ const authorized=req=>good(cookie(req),hash('atlas-access'));
 const send=(res,status,obj)=>{res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store'});res.end(JSON.stringify(obj))};
 const body=req=>new Promise((resolve,reject)=>{let s='';req.on('data',b=>{s+=b;if(s.length>300000){reject(Error('Request too large'));req.destroy()}});req.on('end',()=>{try{resolve(JSON.parse(s||'{}'))}catch{reject(Error('Invalid JSON'))}})});
 const clean=(s,n=3000)=>String(s??'').slice(0,n);
+const validPhoto=value=>{
+ if(!value)return '';
+ if(typeof value!=='string'||value.length>190000)return null;
+ const m=/^data:image\/(jpeg|png|webp);base64,([A-Za-z0-9+/]+={0,2})$/.exec(value);
+ if(!m)return null;
+ const bytes=Buffer.from(m[2],'base64');
+ if(bytes.length>135000||bytes.length<12||bytes.toString('base64')!==m[2])return null;
+ const type=m[1];
+ const valid=type==='jpeg'?bytes[0]===255&&bytes[1]===216&&bytes[2]===255:type==='png'?bytes.subarray(0,8).equals(Buffer.from('89504e470d0a1a0a','hex')):bytes.subarray(0,4).toString()==='RIFF'&&bytes.subarray(8,12).toString()==='WEBP';
+ return valid?value:null;
+};
 const mutate=fn=>{fn();state.revision++;save()};
 const mime={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.svg':'image/svg+xml'};
 http.createServer(async(req,res)=>{
@@ -84,14 +95,15 @@ http.createServer(async(req,res)=>{
   return send(res,200,{ok:true});
  }
  if(u.pathname==='/api/capsule'){
-  const title=clean(b.title,120).trim(),message=clean(b.message,4000).trim();
+  const title=clean(b.title,120).trim(),message=clean(b.message,4000).trim(),photo=validPhoto(b.photo);
   const mode=b.mode==='surprise'?'surprise':'together';
   const recipient=mode==='surprise'?(who==='Danny'?'Mia':'Danny'):'Both';
   const openTime=Date.parse(b.openAt);
   if(!title||!message)return send(res,400,{error:'Add a title and a message'});
+  if(photo===null)return send(res,400,{error:'Photo must be a small valid JPEG, PNG or WebP image'});
   if(!Number.isFinite(openTime)||openTime<=Date.now()+60000||openTime>Date.now()+20*365.25*86400000)return send(res,400,{error:'Choose an opening date in the future (up to 20 years)'});
   if((state.capsules||[]).length>=200)return send(res,400,{error:'Time capsule limit reached'});
-  mutate(()=>{state.capsules??=[];state.capsules.unshift({id:crypto.randomUUID(),who,recipient,mode,title,message,openAt:new Date(openTime).toISOString(),at:new Date().toISOString()})});
+  mutate(()=>{state.capsules??=[];state.capsules.unshift({id:crypto.randomUUID(),who,recipient,mode,title,message,photo,openAt:new Date(openTime).toISOString(),at:new Date().toISOString()})});
   return send(res,200,{ok:true});
  }
  if(u.pathname==='/api/weather'){
