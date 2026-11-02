@@ -167,3 +167,10 @@ $('#capsuleForm').addEventListener('submit',async e=>{
   form.reset();await refresh();toast('Time capsule sealed for the future ✦');
  }catch(err){toast(err.message)}
 });
+
+// Personal themes are browser-local until per-user accounts exist.
+const atlasThemes=['original','rose','forest','ocean','violet'];
+let savedTheme='original';try{savedTheme=localStorage.getItem('atlas-theme-v1')||'original'}catch{}
+$('#atlasTheme').value=atlasThemes.includes(savedTheme)?savedTheme:'original';
+document.body.dataset.atlasTheme=$('#atlasTheme').value;
+$('#atlasTheme').addEventListener('change',()=>{const theme=$('#atlasTheme').value;if(!atlasThemes.includes(theme))return;document.body.dataset.atlasTheme=theme;try{localStorage.setItem('atlas-theme-v1',theme)}catch{}});
