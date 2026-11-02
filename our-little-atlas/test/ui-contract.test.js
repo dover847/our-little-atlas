@@ -97,3 +97,9 @@ test('capsule test photo picker compresses images before submission',()=>{
  assert.ok(js.includes('photo:capsulePhotoData'));
  assert.ok(css.includes('.capsule-photo'));
 });
+
+test('sealed capsules show countdowns without revealing contents',()=>{
+ assert.ok(js.includes('days remaining'));
+ assert.ok(js.includes('x.sealed'));
+ assert.ok(css.includes('.capsule-countdown'));
+});
