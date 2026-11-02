@@ -103,3 +103,12 @@ test('sealed capsules show countdowns without revealing contents',()=>{
  assert.ok(js.includes('x.sealed'));
  assert.ok(css.includes('.capsule-countdown'));
 });
+
+test('memory gallery includes only opened capsule photos and journal memories',()=>{
+ assert.ok(html.includes('id="memoryGallery"'));
+ assert.ok(html.includes('id="memoryFilter"'));
+ assert.ok(js.includes("filter(x=>!x.sealed&&x.photo"));
+ assert.ok(js.includes("filter(x=>x.type==='Memory')"));
+ assert.ok(js.includes('renderMemoryGallery()'));
+ assert.ok(css.includes('.memory-gallery'));
+});
