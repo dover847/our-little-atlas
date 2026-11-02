@@ -88,7 +88,7 @@ http.createServer(async(req,res)=>{
   const duration=['2','8','24','until'].includes(String(b.duration))?String(b.duration):'until';
   const at=new Date().toISOString();
   const expiresAt=duration==='until'?null:new Date(Date.now()+Number(duration)*3600000).toISOString();
-  mutate(()=>{state.weather??={};state.weather[who]={color,label:clean(b.label,60).trim(),note:clean(b.note,500).trim(),at,expiresAt}});
+  mutate(()=>{state.weather??={};state.weather[who]={color,emoji:clean(b.emoji,16).trim(),label:clean(b.label,60).trim(),note:clean(b.note,500).trim(),at,expiresAt}});
   return send(res,200,{ok:true});
  }
  return send(res,404,{error:'Not found'});
