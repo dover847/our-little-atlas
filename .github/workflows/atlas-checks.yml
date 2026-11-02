@@ -1,0 +1,22 @@
+name: Atlas checks
+on:
+  push:
+    branches: [feature/atlas-v3-foundations]
+  pull_request:
+    paths:
+      - 'our-little-atlas/**'
+      - '.github/workflows/atlas-checks.yml'
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: our-little-atlas
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: node --check server.js
+      - run: node --check public/app.js
+      - run: node --test test/atlas.test.js
