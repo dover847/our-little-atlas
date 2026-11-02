@@ -43,3 +43,5 @@ body[data-atlas-theme="violet"]{background:radial-gradient(ellipse at top left,#
 .capsule-countdown{display:inline-block;border:1px solid #e2c39366;border-radius:99px;padding:6px 12px;font-size:12px;letter-spacing:.04em}
 
 .memory-gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:18px;margin:24px 0}.memory-card{min-width:0;padding:20px;border:1px solid #e2c39355;border-radius:12px;background:#ffffff0a;overflow-wrap:anywhere}.memory-card h3{font-size:22px;font-weight:400}.memory-photo{width:100%;max-height:350px;object-fit:contain;border-radius:9px;background:#ffffff0a}.memory-text{white-space:pre-wrap;line-height:1.6;max-height:320px;overflow:auto}
+
+.atlas-theme-picker input[type=file]{width:min(100%,240px);font-size:12px}.atlas-theme-picker button{width:auto;padding:9px 12px;font-size:12px}.atlas-theme-picker label{margin:0}.atlas-theme-picker small{width:100%}
