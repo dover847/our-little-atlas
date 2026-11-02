@@ -1,0 +1,56 @@
+const test=require('node:test');
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const os=require('node:os');
+const path=require('node:path');
+const {spawn}=require('node:child_process');
+const {once}=require('node:events');
+const folder=fs.mkdtempSync(path.join(os.tmpdir(),'atlas-test-'));
+const file=path.join(folder,'atlas-data.json');
+const original={revision:7,selected:null,spins:[],notes:{'1':{Danny:'keep this note'}},favorites:[1],ideas:[{id:'old',title:'keep this idea'}],journal:[{id:'old-entry',who:'Mia',text:'keep this memory'}],customActivities:[]};
+fs.writeFileSync(file,JSON.stringify(original));
+const port=20000+Math.floor(Math.random()*30000);
+const root='http://127.0.0.1:'+port;
+const child=spawn(process.execPath,['server.js'],{cwd:path.join(__dirname,'..'),env:{...process.env,PORT:String(port),ATLAS_PASSWORD:'test-password-12345',ATLAS_SECRET:'test-secret-123456',DATA_FILE:file},stdio:'ignore'});
+let cookie='';
+async function request(route,body){
+ const r=await fetch(root+route,{method:body?'POST':'GET',headers:{'Content-Type':'application/json',...(cookie?{Cookie:cookie}:{})},body:body?JSON.stringify(body):undefined});
+ return {status:r.status,data:await r.json(),headers:r.headers};
+}
+async function ready(){for(let i=0;i<100;i++){try{const r=await fetch(root+'/api/state');if(r.status===401)return}catch{}await new Promise(r=>setTimeout(r,50))}throw Error('Server failed to start')}
+test('Atlas preserves old data and supports understanding tools',async t=>{
+ t.after(async()=>{child.kill();try{await once(child,'exit')}catch{}fs.rmSync(folder,{recursive:true,force:true})});
+ await ready();
+ assert.equal((await request('/api/state')).status,401);
+ const login=await request('/api/login',{password:'test-password-12345'});
+ assert.equal(login.status,200);
+ cookie=login.headers.get('set-cookie').split(';')[0];
+ let current=(await request('/api/state')).data;
+ assert.equal(current.notes['1'].Danny,'keep this note');
+ assert.equal(current.journal[0].text,'keep this memory');
+ assert.equal(current.ideas[0].title,'keep this idea');
+ assert.deepEqual(current.favorites,[1]);
+ assert.equal((await request('/api/mirror',{who:'Danny',expression:'I felt quiet today'})).status,200);
+ current=(await request('/api/state')).data;
+ const mirror=current.mirrors[0].id;
+ assert.equal((await request('/api/mirror-answer',{id:mirror,who:'Danny',kind:'interpretation',answer:'wrong person'})).status,400);
+ assert.equal((await request('/api/mirror-answer',{id:mirror,who:'Mia',kind:'interpretation',answer:'I heard sadness'})).status,200);
+ assert.equal((await request('/api/mirror-answer',{id:mirror,who:'Danny',kind:'intention',answer:'I needed rest'})).status,200);
+ assert.equal((await request('/api/mirror-answer',{id:mirror,who:'Mia',kind:'reflection',answer:'We can ask next time'})).status,200);
+ assert.equal((await request('/api/clarity',{who:'Mia',message:'Did you mean today?'})).status,200);
+ current=(await request('/api/state')).data;
+ assert.equal((await request('/api/clarity-reply',{id:current.clarity[0].id,who:'Danny',message:'Yes, today'})).status,200);
+ assert.equal((await request('/api/assumption',{who:'Danny',observation:'No message',interpretation:'They are upset',intensity:5})).status,200);
+ assert.equal((await request('/api/assumption',{who:'Danny',observation:'No message',interpretation:'They are upset',intensity:11})).status,400);
+ assert.equal((await request('/api/weather',{who:'Mia',color:'#aabbcc',label:'Hopeful',duration:'2'})).status,200);
+ current=(await request('/api/state')).data;
+ assert.equal(current.mirrors[0].intention.text,'I needed rest');
+ assert.equal(current.clarity[0].replies[0].message,'Yes, today');
+ assert.equal(current.assumptions[0].intensity,5);
+ assert.equal(current.weather.Mia.color,'#aabbcc');
+ assert.equal(current.notes['1'].Danny,'keep this note');
+ assert.equal(current.journal[0].text,'keep this memory');
+ const persisted=JSON.parse(fs.readFileSync(file,'utf8'));
+ assert.equal(persisted.notes['1'].Danny,'keep this note');
+ assert.equal(persisted.mirrors.length,1);
+});
