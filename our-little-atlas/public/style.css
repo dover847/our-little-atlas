@@ -10,3 +10,7 @@
 /* Activity-aware spinning wheel */
 .wheel-disc{overflow:hidden;isolation:isolate}.wheel-disc:before{display:none}.wheel-label{position:absolute;left:50%;top:50%;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center;font:600 10px/1.2 system-ui,sans-serif;color:#fff;text-shadow:0 1px 3px #000;pointer-events:none;transform-origin:center;z-index:1}.wheel-center{z-index:3}.wheel-disc{--label-radius:155px}
 @media(max-width:760px){.wheel-label{font-size:8px;max-width:66px}}
+
+/* Keep labels inside the wheel at every viewport width */
+.wheel-frame{container-type:inline-size}.wheel-disc{--wheel-size:100cqw}.wheel-label{max-width:min(100px,21cqw);font-size:clamp(7px,2.2cqw,11px)}
+@media(prefers-reduced-motion:reduce){.wheel-disc{transition-duration:.01s}}
