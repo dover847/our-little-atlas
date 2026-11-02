@@ -3,8 +3,9 @@ const http=require('node:http'),fs=require('node:fs'),path=require('node:path'),
 const PORT=process.env.PORT||3000, PASSWORD=process.env.ATLAS_PASSWORD, SECRET=process.env.ATLAS_SECRET||PASSWORD;
 if(!PASSWORD||PASSWORD.length<12){console.error('Set ATLAS_PASSWORD to a private password of at least 12 characters.');process.exit(1)}
 const activities=require('./activities.json'), DATA=process.env.DATA_FILE||path.join(__dirname,'atlas-data.json');
-let state={revision:0,selected:null,spins:[],notes:{},favorites:[],ideas:[],journal:[],customActivities:[],weather:{},mirrors:[],clarity:[],assumptions:[]};
+let state={revision:0,selected:null,spins:[],notes:{},favorites:[],ideas:[],journal:[],customActivities:[],weather:{},capsules:[],mirrors:[],clarity:[],assumptions:[]};
 try{state={...state,...JSON.parse(fs.readFileSync(DATA,'utf8'))}}catch{}
+const visibleCapsules=()=>Array.isArray(state.capsules)?state.capsules.map(x=>{const opened=Date.now()>=Date.parse(x.openAt);return opened?x:{id:x.id,who:x.who,recipient:x.recipient,mode:x.mode,openAt:x.openAt,at:x.at,sealed:true}}):[];
 const allActivities=()=>[...activities,...(Array.isArray(state.customActivities)?state.customActivities:[])];
 const save=()=>{const temp=DATA+'.tmp';fs.writeFileSync(temp,JSON.stringify(state,null,2));fs.renameSync(temp,DATA)};
 const hash=x=>crypto.createHmac('sha256',SECRET).update(x).digest('hex');
@@ -22,7 +23,7 @@ http.createServer(async(req,res)=>{
  if(req.method==='POST'&&u.pathname==='/api/login'){const b=await body(req);if(!good(b.password,PASSWORD))return send(res,401,{error:'Incorrect password'});res.setHeader('Set-Cookie',`atlas=${hash('atlas-access')}; HttpOnly; SameSite=Lax; Path=/; Max-Age=2592000${process.env.NODE_ENV==='production'?'; Secure':''}`);return send(res,200,{ok:true})}
  if(u.pathname.startsWith('/api/')){
  if(!authorized(req))return send(res,401,{error:'Please unlock the atlas'});
- if(req.method==='GET'&&u.pathname==='/api/state')return send(res,200,{...state,activities:allActivities()});
+ if(req.method==='GET'&&u.pathname==='/api/state')return send(res,200,{...state,capsules:visibleCapsules(),activities:allActivities()});
  if(req.method!=='POST')return send(res,405,{error:'Method not allowed'});
  const b=await body(req),who=['Danny','Mia'].includes(b.who)?b.who:'Danny';
  if(u.pathname==='/api/spin'){const ids=Array.isArray(b.ids)?b.ids.map(Number).filter(x=>allActivities().some(a=>a.id===x)):allActivities().map(a=>a.id);if(!ids.length)return send(res,400,{error:'No activities selected'});const id=ids[crypto.randomInt(ids.length)];mutate(()=>{state.selected=id;state.spins.unshift({id,who,at:new Date().toISOString()});state.spins=state.spins.slice(0,100)});return send(res,200,{selected:id,revision:state.revision})}
@@ -80,6 +81,17 @@ http.createServer(async(req,res)=>{
   if(!['interpretation','intention','reflection'].includes(kind))return send(res,400,{error:'Invalid answer type'});
   if(item[kind])return send(res,409,{error:'This perspective has already been shared'});
   mutate(()=>{item[kind]={who,text:answer,at:new Date().toISOString()}});
+  return send(res,200,{ok:true});
+ }
+ if(u.pathname==='/api/capsule'){
+  const title=clean(b.title,120).trim(),message=clean(b.message,4000).trim();
+  const mode=b.mode==='surprise'?'surprise':'together';
+  const recipient=mode==='surprise'?(who==='Danny'?'Mia':'Danny'):'Both';
+  const openTime=Date.parse(b.openAt);
+  if(!title||!message)return send(res,400,{error:'Add a title and a message'});
+  if(!Number.isFinite(openTime)||openTime<=Date.now()+60000||openTime>Date.now()+20*365.25*86400000)return send(res,400,{error:'Choose an opening date in the future (up to 20 years)'});
+  if((state.capsules||[]).length>=200)return send(res,400,{error:'Time capsule limit reached'});
+  mutate(()=>{state.capsules??=[];state.capsules.unshift({id:crypto.randomUUID(),who,recipient,mode,title,message,openAt:new Date(openTime).toISOString(),at:new Date().toISOString()})});
   return send(res,200,{ok:true});
  }
  if(u.pathname==='/api/weather'){
