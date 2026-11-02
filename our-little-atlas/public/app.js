@@ -3,7 +3,7 @@ const escapeHTML=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;'
 const who=()=>$('#who').value;
 const toast=s=>{const t=$('#toast');t.textContent=s;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2700)};
 async function api(route,data){const r=await fetch('/api/'+route,{method:data?'POST':'GET',headers:{'Content-Type':'application/json'},body:data?JSON.stringify(data):undefined});const j=await r.json();if(!r.ok)throw Error(j.error||'Something went wrong');return j}
-async function refresh(){try{const latest=await api('state');const previous=state?.revision;state=latest;renderCapsules();if(previous!==state.revision){updateCategories();renderWheel();renderActivities();renderEntries();renderIdeas();renderWeather();renderUnderstanding();if(activeId!==null&&!editing)fillNotes(activeId)}}catch(e){if(e.message.includes('unlock')){ $('#app').hidden=true;$('#login').hidden=false }}}
+async function refresh(){try{const latest=await api('state');const previous=state?.revision;state=latest;renderCapsules();renderMemoryGallery();if(previous!==state.revision){updateCategories();renderWheel();renderActivities();renderEntries();renderIdeas();renderWeather();renderUnderstanding();if(activeId!==null&&!editing)fillNotes(activeId)}}catch(e){if(e.message.includes('unlock')){ $('#app').hidden=true;$('#login').hidden=false }}}
 $('#loginForm').addEventListener('submit',async e=>{e.preventDefault();try{await api('login',{password:$('#password').value});$('#login').hidden=true;$('#app').hidden=false;await refresh()}catch(e){$('#loginError').textContent=e.message}});
 const tabs=document.querySelectorAll('.tabs button');tabs.forEach(b=>b.onclick=()=>{tabs.forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===b.dataset.tab))});
 function updateCategories(){if(!state)return;for(const selector of ['#wheelCategory','#filter','#topicCategory']){const el=$(selector),old=el.value;const first=selector==='#topicCategory'?['Our inventions']:(selector==='#filter'?['all','favorites']:['all']);const cats=[...new Set(state.activities.map(a=>a.category))];const options=selector==='#topicCategory'?[...new Set([...first,...cats])]:[...first,...cats];el.innerHTML='';for(const value of options){const label=value==='all'?(selector==='#filter'?'All chapters':'Anything goes'):value==='favorites'?'Our favorites ♡':value;el.add(new Option(label,value))}el.value=options.includes(old)?old:options[0]}}
@@ -190,3 +190,14 @@ let savedTheme='original';try{savedTheme=localStorage.getItem('atlas-theme-v1')|
 $('#atlasTheme').value=atlasThemes.includes(savedTheme)?savedTheme:'original';
 document.body.dataset.atlasTheme=$('#atlasTheme').value;
 $('#atlasTheme').addEventListener('change',()=>{const theme=$('#atlasTheme').value;if(!atlasThemes.includes(theme))return;document.body.dataset.atlasTheme=theme;try{localStorage.setItem('atlas-theme-v1',theme)}catch{}});
+
+// Gallery derives exclusively from already-opened capsules and existing journal entries.
+function renderMemoryGallery(){
+ if(!state)return;
+ const filter=$('#memoryFilter').value;
+ const photos=(state.capsules||[]).filter(x=>!x.sealed&&x.photo&&['data:image/jpeg;base64,','data:image/png;base64,','data:image/webp;base64,'].some(p=>x.photo.startsWith(p))).map(x=>({kind:'photo',at:x.openAt,who:x.who,title:x.title,text:x.message,photo:x.photo}));
+ const journals=(state.journal||[]).filter(x=>x.type==='Memory').map(x=>({kind:'journal',at:x.at,who:x.who,title:x.title||'A memory',text:x.text}));
+ const entries=[...(filter==='journal'?[]:photos),...(filter==='photos'?[]:journals)].sort((a,b)=>Date.parse(b.at)-Date.parse(a.at));
+ $('#memoryGallery').innerHTML=entries.map(x=>'<article class="memory-card"><p class="eyebrow">'+(x.kind==='photo'?'📷 Opened capsule':'✍️ Journal memory')+'</p>'+(x.photo?'<img class="memory-photo" loading="lazy" alt="Opened time capsule photo" src="'+x.photo+'">':'')+'<h3>'+escapeHTML(x.title)+'</h3><p class="muted">'+escapeHTML(x.who)+' · '+escapeHTML(new Date(x.at).toLocaleDateString())+'</p><p class="memory-text">'+escapeHTML(x.text)+'</p></article>').join('')||'<p class="muted">No memories in this view yet. Opened photo capsules and journal memories will appear here.</p>';
+}
+$('#memoryFilter').addEventListener('change',renderMemoryGallery);
