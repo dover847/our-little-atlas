@@ -19,4 +19,4 @@ jobs:
           node-version: '20'
       - run: node --check server.js
       - run: node --check public/app.js
-      - run: node --test test/atlas.test.js
+      - run: node --test test/*.test.js
