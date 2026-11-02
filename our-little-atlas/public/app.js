@@ -150,21 +150,34 @@ $('#topicForm').onsubmit=async e=>{e.preventDefault();try{await api('topic',{who
 $('#ideaForm').onsubmit=async e=>{e.preventDefault();try{await api('idea',{who:who(),title:$('#ideaTitle').value,text:$('#ideaText').value});$('#ideaTitle').value='';$('#ideaText').value='';await refresh();toast('Your idea is in the atlas')}catch(err){toast(err.message)}};
 refresh();setInterval(()=>{if(!document.hidden&&!spinning){refresh();renderWeather()}},4000);
 
+// Compress a test image to a small JPEG before storing it in a capsule.
+let capsulePhotoData='';
+$('#capsulePhoto').addEventListener('change',async()=>{
+ capsulePhotoData='';$('#capsulePhotoPreview').hidden=true;
+ const file=$('#capsulePhoto').files[0];if(!file)return;
+ if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>12000000){toast('Choose a JPEG, PNG or WebP image under 12 MB');$('#capsulePhoto').value='';return}
+ try{
+  const bitmap=await createImageBitmap(file);const canvas=document.createElement('canvas');const scale=Math.min(1,720/Math.max(bitmap.width,bitmap.height));canvas.width=Math.max(1,Math.round(bitmap.width*scale));canvas.height=Math.max(1,Math.round(bitmap.height*scale));canvas.getContext('2d').drawImage(bitmap,0,0,canvas.width,canvas.height);bitmap.close();
+  for(const quality of [.72,.5,.32]){const value=canvas.toDataURL('image/jpeg',quality);if(value.length<=185000){capsulePhotoData=value;break}}
+  if(!capsulePhotoData)throw Error('Image could not fit the capsule size limit');
+  $('#capsulePhotoPreview').src=capsulePhotoData;$('#capsulePhotoPreview').hidden=false;
+ }catch(err){toast(err.message||'Unable to prepare image');$('#capsulePhoto').value=''}
+});
 // Time capsules: server omits sealed contents from shared state until the opening date.
 function renderCapsules(){
  if(!state)return;
  $('#capsuleEntries').innerHTML=(state.capsules||[]).map(x=>{
   const date=Number.isFinite(Date.parse(x.openAt))?new Date(x.openAt).toLocaleString():'Unknown date';
   const meta=escapeHTML(x.who)+' → '+escapeHTML(x.recipient||'Both');
-  return '<article class="capsule-card '+(x.sealed?'capsule-sealed':'capsule-open')+'"><div class="capsule-symbol">'+(x.sealed?'🔒':'💌')+'</div><p class="eyebrow">'+escapeHTML(x.mode==='surprise'?'Surprise capsule':'Together capsule')+'</p><h3>'+(x.sealed?'A memory waiting for its moment':escapeHTML(x.title))+'</h3><p class="muted">'+meta+'</p><p>Opens '+escapeHTML(date)+'</p>'+(x.sealed?'<p class="muted">Sealed until its opening date</p>':'<p class="capsule-message">'+escapeHTML(x.message)+'</p>')+'</article>';
+  return '<article class="capsule-card '+(x.sealed?'capsule-sealed':'capsule-open')+'"><div class="capsule-symbol">'+(x.sealed?'🔒':'💌')+'</div><p class="eyebrow">'+escapeHTML(x.mode==='surprise'?'Surprise capsule':'Together capsule')+'</p><h3>'+(x.sealed?'A memory waiting for its moment':escapeHTML(x.title))+'</h3><p class="muted">'+meta+'</p><p>Opens '+escapeHTML(date)+'</p>'+(x.sealed?'<p class="muted">Sealed until its opening date</p>':'<p class="capsule-message">'+escapeHTML(x.message)+'</p>'+(x.photo&&/^data:image\\/(jpeg|png|webp);base64,[A-Za-z0-9+/]+=*$/.test(x.photo)?'<img class="capsule-photo" alt="Time capsule photograph" src="'+x.photo+'">':''))+'</article>';
  }).join('')||'<p class="muted">No capsules yet. Your first letter to the future can begin here.</p>';
 }
 $('#capsuleForm').addEventListener('submit',async e=>{
  e.preventDefault();
  const form=$('#capsuleForm');
  try{
-  await api('capsule',{who:who(),mode:$('#capsuleMode').value,title:$('#capsuleTitle').value,message:$('#capsuleMessage').value,openAt:new Date($('#capsuleDate').value).toISOString()});
-  form.reset();await refresh();toast('Time capsule sealed for the future ✦');
+  await api('capsule',{who:who(),mode:$('#capsuleMode').value,title:$('#capsuleTitle').value,message:$('#capsuleMessage').value,photo:capsulePhotoData,openAt:new Date($('#capsuleDate').value).toISOString()});
+  form.reset();capsulePhotoData='';$('#capsulePhotoPreview').hidden=true;$('#capsulePhotoPreview').removeAttribute('src');await refresh();toast('Time capsule sealed for the future ✦');
  }catch(err){toast(err.message)}
 });
 
