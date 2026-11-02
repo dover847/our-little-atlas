@@ -201,3 +201,27 @@ function renderMemoryGallery(){
  $('#memoryGallery').innerHTML=entries.map(x=>'<article class="memory-card"><p class="eyebrow">'+(x.kind==='photo'?'📷 Opened capsule':'✍️ Journal memory')+'</p>'+(x.photo?'<img class="memory-photo" loading="lazy" alt="Opened time capsule photo" src="'+x.photo+'">':'')+'<h3>'+escapeHTML(x.title)+'</h3><p class="muted">'+escapeHTML(x.who)+' · '+escapeHTML(new Date(x.at).toLocaleDateString())+'</p><p class="memory-text">'+escapeHTML(x.text)+'</p></article>').join('')||'<p class="muted">No memories in this view yet. Opened photo capsules and journal memories will appear here.</p>';
 }
 $('#memoryFilter').addEventListener('change',renderMemoryGallery);
+
+// Custom photo backgrounds never leave this browser. Storage is best-effort.
+const backgroundPhotoKey='atlas-background-photo-v1';
+function applyBackgroundPhoto(value){
+ if(typeof value==='string'&&value.startsWith('data:image/jpeg;base64,')&&value.length<650000){
+  document.body.style.backgroundImage='linear-gradient(#08131ab8,#08131ab8),url("'+value+'")';
+  document.body.style.backgroundSize='cover';document.body.style.backgroundAttachment='fixed';document.body.style.backgroundPosition='center';
+ }else{document.body.style.removeProperty('background-image');document.body.style.removeProperty('background-size');document.body.style.removeProperty('background-attachment');document.body.style.removeProperty('background-position')}
+}
+try{applyBackgroundPhoto(localStorage.getItem(backgroundPhotoKey))}catch{}
+$('#atlasBackgroundPhoto').addEventListener('change',async()=>{
+ const file=$('#atlasBackgroundPhoto').files[0];if(!file)return;
+ if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>12000000){toast('Choose a JPG, PNG or WebP under 12 MB');return}
+ try{
+  const bitmap=await createImageBitmap(file),canvas=document.createElement('canvas');
+  const scale=Math.min(1,1100/Math.max(bitmap.width,bitmap.height));canvas.width=Math.max(1,Math.round(bitmap.width*scale));canvas.height=Math.max(1,Math.round(bitmap.height*scale));
+  canvas.getContext('2d').drawImage(bitmap,0,0,canvas.width,canvas.height);bitmap.close();
+  let photo='';for(const quality of [.7,.5,.3]){const candidate=canvas.toDataURL('image/jpeg',quality);if(candidate.length<650000){photo=candidate;break}}
+  if(!photo)throw Error('This photo is too large after resizing');
+  localStorage.setItem(backgroundPhotoKey,photo);applyBackgroundPhoto(photo);toast('Your background is ready ✦');
+ }catch(err){toast('Could not save this background: '+err.message)}
+ $('#atlasBackgroundPhoto').value='';
+});
+$('#atlasBackgroundClear').addEventListener('click',()=>{try{localStorage.removeItem(backgroundPhotoKey)}catch{}applyBackgroundPhoto('');$('#atlasBackgroundPhoto').value='';toast('Personal photo background removed')});
