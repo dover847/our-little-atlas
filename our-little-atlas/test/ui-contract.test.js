@@ -121,3 +121,10 @@ test('custom background photos stay browser-local and can be removed',()=>{
  assert.ok(js.includes('localStorage.removeItem(backgroundPhotoKey)'));
  assert.ok(js.includes('applyBackgroundPhoto(photo)'));
 });
+
+test('memory export preserves sealed capsule redaction',()=>{
+ assert.ok(html.includes('id="exportMemories"'));
+ assert.ok(js.includes("x.sealed?{id:x.id,who:x.who"));
+ assert.ok(js.includes("format:'atlas-visible-memories-v1'"));
+ assert.ok(js.includes('URL.createObjectURL(blob)'));
+});
