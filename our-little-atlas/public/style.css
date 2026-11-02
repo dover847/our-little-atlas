@@ -39,3 +39,5 @@ body[data-atlas-theme="ocean"]{background:radial-gradient(ellipse at top left,#2
 body[data-atlas-theme="violet"]{background:radial-gradient(ellipse at top left,#4b3b79 0%,#292440 55%,#151826 100%) fixed}
 
 #capsulePhotoPreview,.capsule-photo{display:block;width:100%;max-width:520px;max-height:460px;object-fit:contain;border-radius:10px;margin:12px 0;background:#ffffff08}#capsulePhotoPreview[hidden]{display:none}.capsule-photo{max-height:360px}
+
+.capsule-countdown{display:inline-block;border:1px solid #e2c39366;border-radius:99px;padding:6px 12px;font-size:12px;letter-spacing:.04em}
