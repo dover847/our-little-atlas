@@ -112,3 +112,12 @@ test('memory gallery includes only opened capsule photos and journal memories',(
  assert.ok(js.includes('renderMemoryGallery()'));
  assert.ok(css.includes('.memory-gallery'));
 });
+
+test('custom background photos stay browser-local and can be removed',()=>{
+ assert.ok(html.includes('id="atlasBackgroundPhoto"'));
+ assert.ok(html.includes('id="atlasBackgroundClear"'));
+ assert.ok(js.includes("const backgroundPhotoKey='atlas-background-photo-v1'"));
+ assert.ok(js.includes('localStorage.setItem(backgroundPhotoKey,photo)'));
+ assert.ok(js.includes('localStorage.removeItem(backgroundPhotoKey)'));
+ assert.ok(js.includes('applyBackgroundPhoto(photo)'));
+});
