@@ -58,3 +58,10 @@ test('Chinese emotional expressions are searchable and labeled',()=>{
  assert.ok(js.includes('renderWeatherEmojiPalette()'));
  assert.ok(css.includes('.emoji-group-heading'));
 });
+
+test('emoji selection has an accessible preview and clear control',()=>{
+ for(const id of ['weatherEmojiPreview','weatherEmojiPreviewIcon','weatherEmojiPreviewLabel','weatherEmojiClear'])assert.ok(html.includes('id="'+id+'"'));
+ assert.ok(js.includes("$('#weatherEmojiClear').addEventListener('click'"));
+ assert.ok(js.includes("$('#weatherEmojiPreviewLabel').textContent"));
+ assert.ok(css.includes('.weather-emoji-preview'));
+});
