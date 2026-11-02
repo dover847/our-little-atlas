@@ -14,3 +14,6 @@
 /* Keep labels inside the wheel at every viewport width */
 .wheel-frame{container-type:inline-size}.wheel-disc{--wheel-size:100cqw}.wheel-label{max-width:min(100px,21cqw);font-size:clamp(7px,2.2cqw,11px)}
 @media(prefers-reduced-motion:reduce){.wheel-disc{transition-duration:.01s}}
+
+/* Expressive emotional weather */
+.weather-emoji-palette{display:grid;grid-template-columns:repeat(auto-fill,minmax(43px,1fr));gap:7px;max-height:205px;overflow:auto;padding:10px;border:1px solid #ffffff35;border-radius:9px;background:#ffffff06}.weather-emoji-palette button{border:1px solid transparent;border-radius:7px;background:#ffffff0b;min-height:42px;font-size:25px;line-height:1}.weather-emoji-palette button:hover,.weather-emoji-palette button:focus-visible,.weather-emoji-palette button.selected{border-color:var(--gold);background:#e2c39330;outline:none}.weather-emoji{font-size:52px;line-height:1.25;margin:8px 0}.weather-card{position:relative}
