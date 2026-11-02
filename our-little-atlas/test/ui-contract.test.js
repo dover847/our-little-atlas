@@ -65,3 +65,11 @@ test('emoji selection has an accessible preview and clear control',()=>{
  assert.ok(js.includes("$('#weatherEmojiPreviewLabel').textContent"));
  assert.ok(css.includes('.weather-emoji-preview'));
 });
+
+test('shared weather cards show safe bilingual meanings and timestamps',()=>{
+ assert.ok(js.includes('weather-expression'));
+ assert.ok(js.includes('weather-time'));
+ assert.ok(js.includes('escapeHTML(expression[1])'));
+ assert.ok(js.includes('escapeHTML(sharedAt)'));
+ assert.ok(css.includes('--personal-weather'));
+});
