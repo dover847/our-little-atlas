@@ -3,7 +3,7 @@ const escapeHTML=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;'
 const who=()=>$('#who').value;
 const toast=s=>{const t=$('#toast');t.textContent=s;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2700)};
 async function api(route,data){const r=await fetch('/api/'+route,{method:data?'POST':'GET',headers:{'Content-Type':'application/json'},body:data?JSON.stringify(data):undefined});const j=await r.json();if(!r.ok)throw Error(j.error||'Something went wrong');return j}
-async function refresh(){try{const latest=await api('state');const previous=state?.revision;state=latest;if(previous!==state.revision){renderWheel();renderActivities();renderEntries();renderIdeas();renderWeather();renderUnderstanding();updateCategories();if(activeId!==null&&!editing)fillNotes(activeId)}}catch(e){if(e.message.includes('unlock')){ $('#app').hidden=true;$('#login').hidden=false }}}
+async function refresh(){try{const latest=await api('state');const previous=state?.revision;state=latest;if(previous!==state.revision){updateCategories();renderWheel();renderActivities();renderEntries();renderIdeas();renderWeather();renderUnderstanding();if(activeId!==null&&!editing)fillNotes(activeId)}}catch(e){if(e.message.includes('unlock')){ $('#app').hidden=true;$('#login').hidden=false }}}
 $('#loginForm').addEventListener('submit',async e=>{e.preventDefault();try{await api('login',{password:$('#password').value});$('#login').hidden=true;$('#app').hidden=false;await refresh()}catch(e){$('#loginError').textContent=e.message}});
 const tabs=document.querySelectorAll('.tabs button');tabs.forEach(b=>b.onclick=()=>{tabs.forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===b.dataset.tab))});
 function updateCategories(){if(!state)return;for(const selector of ['#wheelCategory','#filter','#topicCategory']){const el=$(selector),old=el.value;const first=selector==='#topicCategory'?['Our inventions']:(selector==='#filter'?['all','favorites']:['all']);const cats=[...new Set(state.activities.map(a=>a.category))];const options=selector==='#topicCategory'?[...new Set([...first,...cats])]:[...first,...cats];el.innerHTML='';for(const value of options){const label=value==='all'?(selector==='#filter'?'All chapters':'Anything goes'):value==='favorites'?'Our favorites ♡':value;el.add(new Option(label,value))}el.value=options.includes(old)?old:options[0]}}
@@ -12,10 +12,10 @@ function paintWheel(choices){
  const disc=$('#wheelDisc');if(!choices.length)return;
  wheelIds=choices.map(a=>a.id);
  const n=choices.length,colors=['#d9bd8d','#6c8784','#233c45','#b1a185','#47616b','#bd9b75'];
- disc.style.background='conic-gradient('+choices.map((a,i)=>colors[i%colors.length]+' '+(i*360/n)+'deg '+((i+1)*360/n)+'deg').join(',')+')';
+ disc.style.background='conic-gradient(from 0deg,'+choices.map((a,i)=>colors[i%colors.length]+' '+(i*360/n)+'deg '+((i+1)*360/n)+'deg').join(',')+')';
  disc.querySelectorAll('.wheel-label').forEach(el=>el.remove());
  const shown=n<=24?choices:choices.filter((_,i)=>i%Math.ceil(n/24)===0);
- for(const a of shown){const i=choices.indexOf(a),angle=(i+.5)*360/n,el=document.createElement('span');el.className='wheel-label';el.textContent=n>24?String(i+1):a.title;el.title=a.title;el.style.transform='translate(-50%,-50%) rotate('+angle+'deg) translateY(-155px) rotate('+(-angle)+'deg)';disc.append(el)}
+ for(const a of shown){const i=choices.indexOf(a),angle=(i+.5)*360/n,el=document.createElement('span');el.className='wheel-label';el.textContent=n>24?String(i+1):a.title;el.title=a.title;el.style.transform='translate(-50%,-50%) rotate('+angle+'deg) translateY(calc(var(--wheel-size) * -0.32)) rotate('+(-angle)+'deg)';disc.append(el)}
  disc.setAttribute('aria-label',n+' possible activities');
 }
 function renderWheel(){if(!state)return;const choices=wheelChoices();if(!spinning&&wheelIds.join(',')!==choices.map(a=>a.id).join(','))paintWheel(choices);const a=state.activities.find(a=>a.id===state.selected);if(a&&!spinning){$('#result').innerHTML=`<span class="eyebrow">Our latest adventure · ${escapeHTML(a.category)}</span><h3>${escapeHTML(a.title)}</h3><p>${escapeHTML(a.description)}</p><button id="openResult">Open our notes ↗</button>`;$('#openResult').onclick=()=>openNotes(a.id)}}
@@ -37,6 +37,7 @@ $('#spin').onclick=async()=>{
   $('#result').innerHTML='<span class="eyebrow">The wheel is turning…</span><h3>Something wonderful is on its way ✦</h3>';
   for(let i=0;i<4;i++){button.textContent=messages[i];await new Promise(resolve=>setTimeout(resolve,2050))}
   spinning=false;button.disabled=false;button.textContent='Tempt fate again ✦';await refresh();renderWheel();
+  const picked=state?.activities.find(a=>a.id===outcome.selected);if(picked)toast('The wheel chose: '+picked.title);
  }catch(e){spinning=false;button.disabled=false;button.textContent='Spin the wheel ✦';toast(e.message)}
 };
 function renderActivities(){if(!state)return;const f=$('#filter');const query=$('#search').value.toLowerCase(),filter=f.value;const list=state.activities.filter(a=>(filter==='all'||filter==='favorites'&&state.favorites.includes(a.id)||filter===a.category)&&(a.title+' '+a.description).toLowerCase().includes(query));$('#activities').innerHTML=list.map(a=>`<article class="activity"><span class="eyebrow">${escapeHTML(a.category)} · ${String(a.id).padStart(2,'0')}</span><h3>${escapeHTML(a.title)}</h3><p>${escapeHTML(a.description)}</p><div class="actions"><button data-open="${a.id}">Open our notes ↗</button><button data-fav="${a.id}" class="${state.favorites.includes(a.id)?'loved':''}" aria-label="Toggle favorite">${state.favorites.includes(a.id)?'♥':'♡'}</button></div></article>`).join('')||'<p>No matching adventures yet.</p>'}
