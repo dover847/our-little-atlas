@@ -3,7 +3,7 @@ const http=require('node:http'),fs=require('node:fs'),path=require('node:path'),
 const PORT=process.env.PORT||3000, PASSWORD=process.env.ATLAS_PASSWORD, SECRET=process.env.ATLAS_SECRET||PASSWORD;
 if(!PASSWORD||PASSWORD.length<12){console.error('Set ATLAS_PASSWORD to a private password of at least 12 characters.');process.exit(1)}
 const activities=require('./activities.json'), DATA=process.env.DATA_FILE||path.join(__dirname,'atlas-data.json');
-let state={revision:0,selected:null,spins:[],notes:{},favorites:[],ideas:[],journal:[],customActivities:[],weather:{}};
+let state={revision:0,selected:null,spins:[],notes:{},favorites:[],ideas:[],journal:[],customActivities:[],weather:{},mirrors:[],clarity:[],assumptions:[]};
 try{state={...state,...JSON.parse(fs.readFileSync(DATA,'utf8'))}}catch{}
 const allActivities=()=>[...activities,...(Array.isArray(state.customActivities)?state.customActivities:[])];
 const save=()=>{const temp=DATA+'.tmp';fs.writeFileSync(temp,JSON.stringify(state,null,2));fs.renameSync(temp,DATA)};
@@ -42,6 +42,44 @@ http.createServer(async(req,res)=>{
   const types=['Memory','Letter','Reflection','Poem','Question','Gratitude','Interpretation'];
   const type=types.includes(b.type)?b.type:'Memory';
   mutate(()=>state.journal.unshift({id:crypto.randomUUID(),who,type,title:clean(b.title,120).trim(),mood:clean(b.mood,60).trim(),text:clean(b.text,5000),at:new Date().toISOString(),activity:Number(b.activity)||null}));
+  return send(res,200,{ok:true});
+ }
+ if(u.pathname==='/api/assumption'){
+  const observation=clean(b.observation,1200).trim(),interpretation=clean(b.interpretation,1200).trim();
+  if(!observation||!interpretation)return send(res,400,{error:'Add an observation and interpretation'});
+  const intensity=Number(b.intensity);
+  if(!Number.isInteger(intensity)||intensity<1||intensity>10)return send(res,400,{error:'Intensity must be between 1 and 10'});
+  mutate(()=>{state.assumptions??=[];state.assumptions.unshift({id:crypto.randomUUID(),who,observation,interpretation,alternatives:clean(b.alternatives,1200),unknowns:clean(b.unknowns,1200),question:clean(b.question,1200),intensity,at:new Date().toISOString()})});
+  return send(res,200,{ok:true});
+ }
+ if(u.pathname==='/api/clarity'){
+  const message=clean(b.message,2000).trim();
+  if(!message)return send(res,400,{error:'Write a gentle clarification first'});
+  mutate(()=>{state.clarity??=[];state.clarity.unshift({id:crypto.randomUUID(),who,message,at:new Date().toISOString(),replies:[]})});
+  return send(res,200,{ok:true});
+ }
+ if(u.pathname==='/api/clarity-reply'){
+  const item=(state.clarity||[]).find(x=>x.id===b.id),message=clean(b.message,2000).trim();
+  if(!item||!message)return send(res,400,{error:'Choose a message and write a reply'});
+  mutate(()=>{item.replies??=[];item.replies.push({id:crypto.randomUUID(),who,message,at:new Date().toISOString()})});
+  return send(res,200,{ok:true});
+ }
+ if(u.pathname==='/api/mirror'){
+  const expression=clean(b.expression,2000).trim();
+  if(!expression)return send(res,400,{error:'Share an expression first'});
+  mutate(()=>{state.mirrors??=[];state.mirrors.unshift({id:crypto.randomUUID(),who,expression,at:new Date().toISOString(),interpretation:null,intention:null,reflection:null})});
+  return send(res,200,{ok:true});
+ }
+ if(u.pathname==='/api/mirror-answer'){
+  const item=(state.mirrors||[]).find(x=>x.id===b.id),answer=clean(b.answer,2000).trim();
+  if(!item||!answer)return send(res,400,{error:'Select an expression and write an answer'});
+  const kind=clean(b.kind,30);
+  if(kind==='interpretation'&&who===item.who)return send(res,400,{error:'The other person offers the interpretation'});
+  if(kind==='intention'&&who!==item.who)return send(res,400,{error:'The author offers the intention'});
+  if(kind==='reflection'&&(!item.interpretation||!item.intention))return send(res,400,{error:'Wait for both perspectives first'});
+  if(!['interpretation','intention','reflection'].includes(kind))return send(res,400,{error:'Invalid answer type'});
+  if(item[kind])return send(res,409,{error:'This perspective has already been shared'});
+  mutate(()=>{item[kind]={who,text:answer,at:new Date().toISOString()}});
   return send(res,200,{ok:true});
  }
  if(u.pathname==='/api/weather'){
