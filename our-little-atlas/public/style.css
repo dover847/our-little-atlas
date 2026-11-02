@@ -28,3 +28,12 @@
 
 /* Quick weather presets and private-to-browser emoji favorites */
 .weather-quick-tools{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}.weather-quick-tools button,.weather-presets button{border:1px solid #e2c39366;border-radius:8px;background:#ffffff0b;color:var(--ink);padding:10px 12px;font:12px/1.35 system-ui,sans-serif;cursor:pointer}.weather-quick-tools button[aria-pressed=true]{background:#e2c3932b;border-color:var(--gold)}.weather-quick-tools button:disabled{opacity:.45;cursor:not-allowed}.weather-presets{display:flex;gap:8px;overflow-x:auto;padding:8px 0 12px;scroll-snap-type:x proximity}.weather-presets button{flex:0 0 auto;scroll-snap-align:start;white-space:nowrap}.weather-presets button:focus-visible,.weather-quick-tools button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+/* Time capsule foundation */
+.capsule-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:16px;margin:24px 0}.capsule-card{padding:22px;border:1px solid #e2c39355;border-radius:12px;background:#ffffff0a;overflow-wrap:anywhere}.capsule-card h3{font-weight:400;font-size:23px}.capsule-symbol{font-size:32px}.capsule-message{white-space:pre-wrap;line-height:1.7;border-top:1px solid #ffffff33;padding-top:16px}.capsule-open{border-color:#a7cbb5}
+/* Browser-local background presets */
+.atlas-theme-picker{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin:0 0 22px;font:12px system-ui,sans-serif}.atlas-theme-picker select{width:auto;max-width:220px}.atlas-theme-picker small{color:var(--muted)}
+body[data-atlas-theme="rose"]{background:radial-gradient(ellipse at top left,#633c58 0%,#241f33 52%,#111a26 100%) fixed}
+body[data-atlas-theme="forest"]{background:radial-gradient(ellipse at top left,#2c584d 0%,#142d2b 55%,#101d25 100%) fixed}
+body[data-atlas-theme="ocean"]{background:radial-gradient(ellipse at top left,#254b6c 0%,#12283f 55%,#0c192b 100%) fixed}
+body[data-atlas-theme="violet"]{background:radial-gradient(ellipse at top left,#4b3b79 0%,#292440 55%,#151826 100%) fixed}
