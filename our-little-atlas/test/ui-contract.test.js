@@ -49,3 +49,12 @@ test('weather emoji picker has input, controls, and safe output',()=>{
  assert.ok(js.includes('escapeHTML(w.emoji)'));
  assert.ok(css.includes('.weather-emoji-palette'));
 });
+
+test('Chinese emotional expressions are searchable and labeled',()=>{
+ assert.match(html,/id="weatherEmojiSearch"/);
+ assert.ok(js.includes('chineseWeatherExpressions'));
+ assert.ok(js.includes('捂脸'));
+ assert.ok(js.includes('偷笑'));
+ assert.ok(js.includes('renderWeatherEmojiPalette()'));
+ assert.ok(css.includes('.emoji-group-heading'));
+});
