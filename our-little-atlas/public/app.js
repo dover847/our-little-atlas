@@ -225,3 +225,12 @@ $('#atlasBackgroundPhoto').addEventListener('change',async()=>{
  $('#atlasBackgroundPhoto').value='';
 });
 $('#atlasBackgroundClear').addEventListener('click',()=>{try{localStorage.removeItem(backgroundPhotoKey)}catch{}applyBackgroundPhoto('');$('#atlasBackgroundPhoto').value='';toast('Personal photo background removed')});
+
+// Export only the server-authorized view. Never serialize sealed capsule content.
+$('#exportMemories').addEventListener('click',()=>{
+ if(!state)return;
+ const safeCapsules=(state.capsules||[]).map(x=>x.sealed?{id:x.id,who:x.who,recipient:x.recipient,mode:x.mode,openAt:x.openAt,at:x.at,sealed:true}:x);
+ const data={format:'atlas-visible-memories-v1',exportedAt:new Date().toISOString(),journal:state.journal||[],capsules:safeCapsules};
+ const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+ const url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download='atlas-visible-memories-'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);toast('Visible memories exported ✦');
+});
