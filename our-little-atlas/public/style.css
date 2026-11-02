@@ -25,3 +25,6 @@
 
 /* More legible shared emotional weather */
 .weather-card{border-top:3px solid var(--personal-weather,#52656a)}.weather-card .weather-expression{font:13px/1.5 system-ui,sans-serif;color:var(--gold);margin-top:2px}.weather-card .weather-time{display:block;margin-top:16px;color:var(--muted);font:11px/1.5 system-ui,sans-serif}.weather-card .weather-note{padding:12px;border-radius:7px;background:#ffffff0a;border-left:3px solid var(--personal-weather,#52656a)}
+
+/* Quick weather presets and private-to-browser emoji favorites */
+.weather-quick-tools{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}.weather-quick-tools button,.weather-presets button{border:1px solid #e2c39366;border-radius:8px;background:#ffffff0b;color:var(--ink);padding:10px 12px;font:12px/1.35 system-ui,sans-serif;cursor:pointer}.weather-quick-tools button[aria-pressed=true]{background:#e2c3932b;border-color:var(--gold)}.weather-quick-tools button:disabled{opacity:.45;cursor:not-allowed}.weather-presets{display:flex;gap:8px;overflow-x:auto;padding:8px 0 12px;scroll-snap-type:x proximity}.weather-presets button{flex:0 0 auto;scroll-snap-align:start;white-space:nowrap}.weather-presets button:focus-visible,.weather-quick-tools button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
