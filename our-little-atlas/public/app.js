@@ -53,17 +53,57 @@ const weatherEmojis=['😊','🥰','😍','😘','😌','😇','🤗','🫶','�
 const chineseWeatherExpressions=[
  ['🤦','捂脸','facepalm embarrassed helpless'],['🤭','偷笑','secret laugh snicker'],['🤣','笑哭','laugh crying'],['🥹','破涕为笑','tears to smile moved'],['😏','坏笑','mischievous smile'],['🙄','白眼','eye roll'],['😒','鄙视','disdain'],['😌','悠闲','relaxed peaceful'],['🥰','喜欢','affection fondness'],['😘','飞吻','blowing kiss'],['🫶','比心','finger heart love'],['🫰','比心','finger heart'],['🥺','委屈','aggrieved pout'],['😭','大哭','crying'],['😢','流泪','tears'],['😔','难过','sad'],['😮‍💨','叹气','sigh'],['😤','生气','annoyed'],['😡','发怒','angry'],['😳','害羞','shy blushing'],['🤗','抱抱','hug'],['🫂','拥抱','embrace'],['🥱','困','sleepy'],['😴','睡觉','sleeping'],['🤔','疑问','question thinking'],['😶','无语','speechless'],['😅','尴尬','awkward'],['🫠','融化','melting overwhelmed'],['🤪','调皮','playful'],['😜','吐舌','tongue teasing'],['🤫','嘘','shush'],['🫣','偷偷看','peeking'],['👀','吃瓜','watching drama gossip'],['🍉','吃瓜','watching gossip'],['💪','加油','cheering encouragement'],['🙏','拜托','please request'],['👍','赞','approval'],['👏','鼓掌','applause'],['🎉','庆祝','celebrating'],['💐','送花','flowers'],['❤️','爱你','love you'],['💗','心动','heart flutter'],['💌','想你','missing you'],['🐱','撒娇','cute coquettish'],['🥰','甜蜜','sweet affectionate'],['🌙','晚安','good night'],['☀️','早安','good morning'],['☁️','低气压','low mood'],['🌧️','心情不好','bad mood rainy'],['🌈','雨过天晴','hope after rain'],['😮','惊讶','surprised'],['😱','震惊','shocked'],['🫡','收到','understood acknowledged'],['🙇','谢谢','thank you'],['🥲','苦笑','bitter smile'],['🤨','怀疑','skeptical'],['😵‍💫','晕','dizzy'],['🫢','惊讶','gasp'],['💤','摆烂','giving up tired'],['🧸','求安慰','need comfort'],['🥺','求抱抱','want a hug'],['🤍','安心','reassured']
 ];
-function updateWeatherEmojiSelection(){const selected=$('#weatherEmoji').value.trim();document.querySelectorAll('#weatherEmojiPalette button').forEach(b=>{const active=b.dataset.emoji===selected;b.classList.toggle('selected',active);b.setAttribute('aria-pressed',String(active))});const match=chineseWeatherExpressions.find(x=>x[0]===selected);$('#weatherEmojiPreviewIcon').textContent=selected||'✨';$('#weatherEmojiPreviewLabel').textContent=selected?(match?match[1]+' · '+match[2]:'Your selected expression'):'Choose a feeling to preview it here';$('#weatherEmojiClear').disabled=!selected}
+// Favorites are stored only in this browser, not in shared Atlas state.
+const weatherFavoriteKey='atlas-weather-favorites-v1';
+let weatherFavorites=[];
+try{const saved=JSON.parse(localStorage.getItem(weatherFavoriteKey)||'[]');if(Array.isArray(saved))weatherFavorites=saved.filter(x=>typeof x==='string'&&x.length<=16).slice(0,40)}catch{}
+let weatherFavoritesOnly=false;
+const weatherPresets=[
+ {emoji:'🥰',label:'Feeling loved',color:'#f5a6bd',note:''},
+ {emoji:'🥺',label:'Need some tenderness',color:'#b5a4db',note:''},
+ {emoji:'🤭',label:'Playful and shy',color:'#f3c6a1',note:''},
+ {emoji:'😌',label:'Quietly peaceful',color:'#9dc8bb',note:''},
+ {emoji:'😴',label:'Low energy',color:'#8e9db8',note:''},
+ {emoji:'🌧️',label:'A little cloudy',color:'#839ab0',note:''},
+ {emoji:'💌',label:'Thinking of you',color:'#e6a1b0',note:''},
+ {emoji:'🌈',label:'Hopeful',color:'#a9c9ae',note:''}
+];
+function updateWeatherFavoriteControls(){
+ const selected=$('#weatherEmoji').value.trim(),favorite=weatherFavorites.includes(selected);
+ $('#weatherFavoriteToggle').disabled=!selected;
+ $('#weatherFavoriteToggle').textContent=favorite?'★ Remove favorite':'☆ Save favorite emoji';
+ $('#weatherFavoriteToggle').setAttribute('aria-pressed',String(favorite));
+ $('#weatherFavoritesOnly').setAttribute('aria-pressed',String(weatherFavoritesOnly));
+ $('#weatherFavoritesOnly').textContent=weatherFavoritesOnly?'Show all emojis':'Favorites only';
+}
+$('#weatherFavoriteToggle').addEventListener('click',()=>{
+ const emoji=$('#weatherEmoji').value.trim();if(!emoji)return;
+ weatherFavorites=weatherFavorites.includes(emoji)?weatherFavorites.filter(x=>x!==emoji):[emoji,...weatherFavorites].slice(0,40);
+ try{localStorage.setItem(weatherFavoriteKey,JSON.stringify(weatherFavorites))}catch{}
+ renderWeatherEmojiPalette();
+});
+$('#weatherFavoritesOnly').addEventListener('click',()=>{weatherFavoritesOnly=!weatherFavoritesOnly;renderWeatherEmojiPalette()});
+const presetContainer=$('#weatherPresets');
+weatherPresets.forEach(p=>{
+ const b=document.createElement('button');b.type='button';b.textContent=p.emoji+' '+p.label;
+ b.addEventListener('click',()=>{
+  $('#weatherEmoji').value=p.emoji;$('#weatherColor').value=p.color;$('#weatherLabel').value=p.label;
+  // A preset never overwrites a personal note.
+  updateWeatherEmojiSelection();
+ });
+ presetContainer.append(b);
+});
+function updateWeatherEmojiSelection(){const selected=$('#weatherEmoji').value.trim();document.querySelectorAll('#weatherEmojiPalette button').forEach(b=>{const active=b.dataset.emoji===selected;b.classList.toggle('selected',active);b.setAttribute('aria-pressed',String(active))});const match=chineseWeatherExpressions.find(x=>x[0]===selected);$('#weatherEmojiPreviewIcon').textContent=selected||'✨';$('#weatherEmojiPreviewLabel').textContent=selected?(match?match[1]+' · '+match[2]:'Your selected expression'):'Choose a feeling to preview it here';$('#weatherEmojiClear').disabled=!selected;updateWeatherFavoriteControls()}
 function renderWeatherEmojiPalette(){
  const q=$('#weatherEmojiSearch').value.trim().toLocaleLowerCase();
- const items=[...weatherEmojis.map(e=>({emoji:e,label:'',search:e,group:'Everyday emojis'})),...chineseWeatherExpressions.map(([emoji,label,english])=>({emoji,label,search:emoji+' '+label+' '+english,group:'中文表情 · Chinese expressions'}))].filter(x=>!q||x.search.toLocaleLowerCase().includes(q));
+ const items=[...weatherEmojis.map(e=>({emoji:e,label:'',search:e,group:'Everyday emojis'})),...chineseWeatherExpressions.map(([emoji,label,english])=>({emoji,label,search:emoji+' '+label+' '+english,group:'中文表情 · Chinese expressions'}))].filter(x=>(!q||x.search.toLocaleLowerCase().includes(q))&&(!weatherFavoritesOnly||weatherFavorites.includes(x.emoji)));
  const palette=$('#weatherEmojiPalette');palette.replaceChildren();
  for(const group of ['中文表情 · Chinese expressions','Everyday emojis']){
   const matches=items.filter(x=>x.group===group);if(!matches.length)continue;
   const heading=document.createElement('div');heading.className='emoji-group-heading';heading.textContent=group;palette.append(heading);
   for(const item of matches){const button=document.createElement('button');button.type='button';button.dataset.emoji=item.emoji;button.title=item.label||item.emoji;button.setAttribute('aria-label',item.label||item.emoji);button.setAttribute('aria-pressed','false');const emoji=document.createElement('span');emoji.textContent=item.emoji;button.append(emoji);if(item.label){const label=document.createElement('small');label.textContent=item.label;button.append(label)}palette.append(button)}
  }
- if(!items.length){const empty=document.createElement('p');empty.className='muted';empty.textContent='No matching expression. You can type your own below.';palette.append(empty)}
+ if(!items.length){const empty=document.createElement('p');empty.className='muted';empty.textContent=weatherFavoritesOnly?'No favorite emojis match yet. Select one, then save it as a favorite.':'No matching expression. You can type your own below.';palette.append(empty)}
  updateWeatherEmojiSelection();
 }
 $('#weatherEmojiSearch').addEventListener('input',renderWeatherEmojiPalette);
