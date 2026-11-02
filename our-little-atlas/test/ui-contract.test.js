@@ -33,3 +33,11 @@ test('mobile understanding layout is provided',()=>{
  assert.match(css,/understanding-grid/);
  assert.match(css,/@media\(max-width:760px\)/);
 });
+
+test('wheel chooses a server-confirmed segment and renders activity slices',()=>{
+ assert.ok(js.includes("const outcome=await api('spin'"),'Wheel must use server result');
+ assert.ok(js.includes('ids.indexOf(outcome.selected)'),'Wheel must locate selected slice');
+ assert.ok(js.includes("disc.style.background='conic-gradient"),'Wheel must draw slices');
+ assert.ok(js.includes('paintWheel(wheelChoices())'),'Wheel must repaint on category change');
+ assert.ok(css.includes('container-type:inline-size'),'Mobile labels must scale with frame');
+});
