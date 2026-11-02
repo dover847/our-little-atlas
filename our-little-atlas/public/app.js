@@ -169,6 +169,9 @@ function renderCapsules(){
  $('#capsuleEntries').innerHTML=(state.capsules||[]).map(x=>{
   const date=Number.isFinite(Date.parse(x.openAt))?new Date(x.openAt).toLocaleString():'Unknown date';
   const meta=escapeHTML(x.who)+' → '+escapeHTML(x.recipient||'Both');
+  const remaining=Math.max(0,Date.parse(x.openAt)-Date.now());
+  const days=Math.ceil(remaining/86400000);
+  const countdown=x.sealed&&Number.isFinite(days)?(days>1?days+' days remaining':remaining>3600000?'Opens within a day':'Opening soon'):'';
   return '<article class="capsule-card '+(x.sealed?'capsule-sealed':'capsule-open')+'"><div class="capsule-symbol">'+(x.sealed?'🔒':'💌')+'</div><p class="eyebrow">'+escapeHTML(x.mode==='surprise'?'Surprise capsule':'Together capsule')+'</p><h3>'+(x.sealed?'A memory waiting for its moment':escapeHTML(x.title))+'</h3><p class="muted">'+meta+'</p><p>Opens '+escapeHTML(date)+'</p>'+(x.sealed?'<p class="muted">Sealed until its opening date</p>':'<p class="capsule-message">'+escapeHTML(x.message)+'</p>'+(x.photo&&['data:image/jpeg;base64,','data:image/png;base64,','data:image/webp;base64,'].some(prefix=>x.photo.startsWith(prefix))?'<img class="capsule-photo" alt="Time capsule photograph" src="'+x.photo+'">':''))+'</article>';
  }).join('')||'<p class="muted">No capsules yet. Your first letter to the future can begin here.</p>';
 }
