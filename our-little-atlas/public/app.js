@@ -3,7 +3,7 @@ const escapeHTML=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;'
 const who=()=>$('#who').value;
 const toast=s=>{const t=$('#toast');t.textContent=s;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2700)};
 async function api(route,data){const r=await fetch('/api/'+route,{method:data?'POST':'GET',headers:{'Content-Type':'application/json'},body:data?JSON.stringify(data):undefined});const j=await r.json();if(!r.ok)throw Error(j.error||'Something went wrong');return j}
-async function refresh(){try{const latest=await api('state');const previous=state?.revision;state=latest;if(previous!==state.revision){updateCategories();renderWheel();renderActivities();renderEntries();renderIdeas();renderWeather();renderUnderstanding();if(activeId!==null&&!editing)fillNotes(activeId)}}catch(e){if(e.message.includes('unlock')){ $('#app').hidden=true;$('#login').hidden=false }}}
+async function refresh(){try{const latest=await api('state');const previous=state?.revision;state=latest;if(previous!==state.revision){updateCategories();renderWheel();renderActivities();renderEntries();renderIdeas();renderWeather();renderCapsules();renderUnderstanding();if(activeId!==null&&!editing)fillNotes(activeId)}}catch(e){if(e.message.includes('unlock')){ $('#app').hidden=true;$('#login').hidden=false }}}
 $('#loginForm').addEventListener('submit',async e=>{e.preventDefault();try{await api('login',{password:$('#password').value});$('#login').hidden=true;$('#app').hidden=false;await refresh()}catch(e){$('#loginError').textContent=e.message}});
 const tabs=document.querySelectorAll('.tabs button');tabs.forEach(b=>b.onclick=()=>{tabs.forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===b.dataset.tab))});
 function updateCategories(){if(!state)return;for(const selector of ['#wheelCategory','#filter','#topicCategory']){const el=$(selector),old=el.value;const first=selector==='#topicCategory'?['Our inventions']:(selector==='#filter'?['all','favorites']:['all']);const cats=[...new Set(state.activities.map(a=>a.category))];const options=selector==='#topicCategory'?[...new Set([...first,...cats])]:[...first,...cats];el.innerHTML='';for(const value of options){const label=value==='all'?(selector==='#filter'?'All chapters':'Anything goes'):value==='favorites'?'Our favorites ♡':value;el.add(new Option(label,value))}el.value=options.includes(old)?old:options[0]}}
@@ -149,3 +149,21 @@ $('#journalForm').onsubmit=async e=>{e.preventDefault();try{await api('journal',
 $('#topicForm').onsubmit=async e=>{e.preventDefault();try{await api('topic',{who:who(),title:$('#topicTitle').value,category:$('#topicCategory').value,description:$('#topicDescription').value});$('#topicTitle').value='';$('#topicDescription').value='';await refresh();toast('Your new adventure is on the wheel!')}catch(err){toast(err.message)}};
 $('#ideaForm').onsubmit=async e=>{e.preventDefault();try{await api('idea',{who:who(),title:$('#ideaTitle').value,text:$('#ideaText').value});$('#ideaTitle').value='';$('#ideaText').value='';await refresh();toast('Your idea is in the atlas')}catch(err){toast(err.message)}};
 refresh();setInterval(()=>{if(!document.hidden&&!spinning){refresh();renderWeather()}},4000);
+
+// Time capsules: server omits sealed contents from shared state until the opening date.
+function renderCapsules(){
+ if(!state)return;
+ $('#capsuleEntries').innerHTML=(state.capsules||[]).map(x=>{
+  const date=Number.isFinite(Date.parse(x.openAt))?new Date(x.openAt).toLocaleString():'Unknown date';
+  const meta=escapeHTML(x.who)+' → '+escapeHTML(x.recipient||'Both');
+  return '<article class="capsule-card '+(x.sealed?'capsule-sealed':'capsule-open')+'"><div class="capsule-symbol">'+(x.sealed?'🔒':'💌')+'</div><p class="eyebrow">'+escapeHTML(x.mode==='surprise'?'Surprise capsule':'Together capsule')+'</p><h3>'+(x.sealed?'A memory waiting for its moment':escapeHTML(x.title))+'</h3><p class="muted">'+meta+'</p><p>Opens '+escapeHTML(date)+'</p>'+(x.sealed?'<p class="muted">Sealed until its opening date</p>':'<p class="capsule-message">'+escapeHTML(x.message)+'</p>')+'</article>';
+ }).join('')||'<p class="muted">No capsules yet. Your first letter to the future can begin here.</p>';
+}
+$('#capsuleForm').addEventListener('submit',async e=>{
+ e.preventDefault();
+ const form=$('#capsuleForm');
+ try{
+  await api('capsule',{who:who(),mode:$('#capsuleMode').value,title:$('#capsuleTitle').value,message:$('#capsuleMessage').value,openAt:new Date($('#capsuleDate').value).toISOString()});
+  form.reset();await refresh();toast('Time capsule sealed for the future ✦');
+ }catch(err){toast(err.message)}
+});
