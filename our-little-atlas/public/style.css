@@ -17,3 +17,6 @@
 
 /* Expressive emotional weather */
 .weather-emoji-palette{display:grid;grid-template-columns:repeat(auto-fill,minmax(43px,1fr));gap:7px;max-height:205px;overflow:auto;padding:10px;border:1px solid #ffffff35;border-radius:9px;background:#ffffff06}.weather-emoji-palette button{border:1px solid transparent;border-radius:7px;background:#ffffff0b;min-height:42px;font-size:25px;line-height:1}.weather-emoji-palette button:hover,.weather-emoji-palette button:focus-visible,.weather-emoji-palette button.selected{border-color:var(--gold);background:#e2c39330;outline:none}.weather-emoji{font-size:52px;line-height:1.25;margin:8px 0}.weather-card{position:relative}
+
+/* Bilingual emoji weather library */
+.weather-emoji-palette{max-height:300px;grid-template-columns:repeat(auto-fill,minmax(68px,1fr));align-items:stretch}.weather-emoji-palette button{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px;padding:7px 3px;min-height:64px}.weather-emoji-palette button span{font-size:26px}.weather-emoji-palette button small{font:11px/1.2 system-ui,sans-serif;color:var(--ink);overflow-wrap:anywhere}.emoji-group-heading{grid-column:1/-1;color:var(--gold);font:600 12px/1.4 system-ui,sans-serif;letter-spacing:.4px;padding:10px 2px 2px}
