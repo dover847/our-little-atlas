@@ -81,3 +81,11 @@ test('emoji favorites are browser-local and weather presets preserve notes',()=>
  assert.ok(js.includes('A preset never overwrites a personal note'));
  assert.ok(css.includes('.weather-presets'));
 });
+
+test('future capsules have a sealed display and background theme controls',()=>{
+ for(const id of ['capsuleForm','capsuleMode','capsuleTitle','capsuleMessage','capsuleDate','capsuleEntries','atlasTheme'])assert.ok(html.includes('id="'+id+'"'));
+ assert.ok(js.includes("api('capsule'"));
+ assert.ok(js.includes('renderCapsules()'));
+ assert.ok(js.includes("localStorage.setItem('atlas-theme-v1'"));
+ assert.ok(css.includes('.capsule-grid'));
+});
