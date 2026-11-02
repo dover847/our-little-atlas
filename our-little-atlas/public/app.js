@@ -71,7 +71,18 @@ $('#weatherEmojiPalette').addEventListener('click',e=>{const b=e.target.closest(
 $('#weatherEmoji').addEventListener('input',updateWeatherEmojiSelection);
 $('#weatherEmojiClear').addEventListener('click',()=>{$('#weatherEmoji').value='';updateWeatherEmojiSelection()});
 renderWeatherEmojiPalette();
-function renderWeather(){if(!state)return;const now=Date.now();$('#weatherCards').innerHTML=['Danny','Mia'].map(person=>{const w=state.weather?.[person],active=w&&(!w.expiresAt||Date.parse(w.expiresAt)>now);return `<article class="weather-card"><div class="weather-swatch" style="background:${active&&/^#[0-9a-fA-F]{6}$/.test(w.color)?w.color:'#52656a'}"></div><h3>${person}'s weather</h3>${active&&w.emoji?'<div class="weather-emoji" aria-label="Mood emoji">'+escapeHTML(w.emoji)+'</div>':''}<p>${active?escapeHTML(w.label||'A color without a label'):'Not currently shared'}</p>${active&&w.note?'<p class="weather-note">'+escapeHTML(w.note)+'</p>':''}</article>`}).join('')}
+function renderWeather(){
+ if(!state)return;
+ const now=Date.now();
+ $('#weatherCards').innerHTML=['Danny','Mia'].map(person=>{
+  const w=state.weather?.[person],active=w&&(!w.expiresAt||Date.parse(w.expiresAt)>now);
+  const color=active&&/^#[0-9a-fA-F]{6}$/.test(w.color)?w.color:'#52656a';
+  const expression=active&&w.emoji?chineseWeatherExpressions.find(x=>x[0]===w.emoji):null;
+  const sharedAt=active&&w.at&&!Number.isNaN(Date.parse(w.at))?new Date(w.at).toLocaleString():'';
+  const until=active&&w.expiresAt&&!Number.isNaN(Date.parse(w.expiresAt))?new Date(w.expiresAt).toLocaleString():'';
+  return `<article class="weather-card" style="--personal-weather:${color}"><div class="weather-swatch" style="background:${color}"></div><h3>${person}'s weather</h3>${active&&w.emoji?'<div class="weather-emoji" aria-label="Mood emoji">'+escapeHTML(w.emoji)+'</div>':''}${expression?'<p class="weather-expression">'+escapeHTML(expression[1])+' · '+escapeHTML(expression[2])+'</p>':''}<p>${active?escapeHTML(w.label||'A color without a label'):'Not currently shared'}</p>${active&&w.note?'<p class="weather-note">'+escapeHTML(w.note)+'</p>':''}${sharedAt?'<small class="weather-time">Shared '+escapeHTML(sharedAt)+(until?' · Until '+escapeHTML(until):' · Until changed')+'</small>':''}</article>`;
+ }).join('');
+}
 $('#weatherForm').onsubmit=async e=>{e.preventDefault();try{await api('weather',{who:who(),color:$('#weatherColor').value,emoji:$('#weatherEmoji').value.trim(),label:$('#weatherLabel').value,note:$('#weatherNote').value,duration:$('#weatherDuration').value});await refresh();toast('Your weather has been shared')}catch(err){toast(err.message)}};
 
 function renderUnderstanding(){
