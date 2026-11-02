@@ -3,7 +3,7 @@ const http=require('node:http'),fs=require('node:fs'),path=require('node:path'),
 const PORT=process.env.PORT||3000, PASSWORD=process.env.ATLAS_PASSWORD, SECRET=process.env.ATLAS_SECRET||PASSWORD;
 if(!PASSWORD||PASSWORD.length<12){console.error('Set ATLAS_PASSWORD to a private password of at least 12 characters.');process.exit(1)}
 const activities=require('./activities.json'), DATA=process.env.DATA_FILE||path.join(__dirname,'atlas-data.json');
-let state={revision:0,selected:null,spins:[],notes:{},favorites:[],ideas:[],journal:[],customActivities:[]};
+let state={revision:0,selected:null,spins:[],notes:{},favorites:[],ideas:[],journal:[],customActivities:[],weather:{}};
 try{state={...state,...JSON.parse(fs.readFileSync(DATA,'utf8'))}}catch{}
 const allActivities=()=>[...activities,...(Array.isArray(state.customActivities)?state.customActivities:[])];
 const save=()=>{const temp=DATA+'.tmp';fs.writeFileSync(temp,JSON.stringify(state,null,2));fs.renameSync(temp,DATA)};
@@ -37,7 +37,22 @@ http.createServer(async(req,res)=>{
   return send(res,200,{ok:true,topic});
  }
  if(u.pathname==='/api/idea'){if(!clean(b.title,100).trim())return send(res,400,{error:'Give your idea a title'});mutate(()=>state.ideas.unshift({id:crypto.randomUUID(),who,title:clean(b.title,100),text:clean(b.text,3000),at:new Date().toISOString()}));return send(res,200,{ok:true})}
- if(u.pathname==='/api/journal'){if(!clean(b.text).trim())return send(res,400,{error:'Write something first'});mutate(()=>state.journal.unshift({id:crypto.randomUUID(),who,text:clean(b.text,5000),at:new Date().toISOString(),activity:Number(b.activity)||null}));return send(res,200,{ok:true})}
+ if(u.pathname==='/api/journal'){
+  if(!clean(b.text,5000).trim())return send(res,400,{error:'Write something first'});
+  const types=['Memory','Letter','Reflection','Poem','Question','Gratitude','Interpretation'];
+  const type=types.includes(b.type)?b.type:'Memory';
+  mutate(()=>state.journal.unshift({id:crypto.randomUUID(),who,type,title:clean(b.title,120).trim(),mood:clean(b.mood,60).trim(),text:clean(b.text,5000),at:new Date().toISOString(),activity:Number(b.activity)||null}));
+  return send(res,200,{ok:true});
+ }
+ if(u.pathname==='/api/weather'){
+  const color=clean(b.color,7);
+  if(!/^#[0-9a-fA-F]{6}$/.test(color))return send(res,400,{error:'Choose a valid color'});
+  const duration=['2','8','24','until'].includes(String(b.duration))?String(b.duration):'until';
+  const at=new Date().toISOString();
+  const expiresAt=duration==='until'?null:new Date(Date.now()+Number(duration)*3600000).toISOString();
+  mutate(()=>{state.weather??={};state.weather[who]={color,label:clean(b.label,60).trim(),note:clean(b.note,500).trim(),at,expiresAt}});
+  return send(res,200,{ok:true});
+ }
  return send(res,404,{error:'Not found'});
  }
  const p=u.pathname==='/'?'/index.html':u.pathname;
