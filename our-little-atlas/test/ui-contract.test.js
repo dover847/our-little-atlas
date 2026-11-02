@@ -73,3 +73,11 @@ test('shared weather cards show safe bilingual meanings and timestamps',()=>{
  assert.ok(js.includes('escapeHTML(sharedAt)'));
  assert.ok(css.includes('--personal-weather'));
 });
+
+test('emoji favorites are browser-local and weather presets preserve notes',()=>{
+ for(const id of ['weatherFavoriteToggle','weatherFavoritesOnly','weatherPresets'])assert.ok(html.includes('id="'+id+'"'));
+ assert.ok(js.includes("localStorage.setItem(weatherFavoriteKey"));
+ assert.ok(js.includes('weatherFavoritesOnly||weatherFavorites.includes(x.emoji)'));
+ assert.ok(js.includes('A preset never overwrites a personal note'));
+ assert.ok(css.includes('.weather-presets'));
+});
