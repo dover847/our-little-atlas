@@ -89,3 +89,11 @@ test('future capsules have a sealed display and background theme controls',()=>{
  assert.ok(js.includes("localStorage.setItem('atlas-theme-v1'"));
  assert.ok(css.includes('.capsule-grid'));
 });
+
+test('capsule test photo picker compresses images before submission',()=>{
+ assert.ok(html.includes('id="capsulePhoto"'));
+ assert.ok(html.includes('id="capsulePhotoPreview"'));
+ assert.ok(js.includes('createImageBitmap(file)'));
+ assert.ok(js.includes('photo:capsulePhotoData'));
+ assert.ok(css.includes('.capsule-photo'));
+});
