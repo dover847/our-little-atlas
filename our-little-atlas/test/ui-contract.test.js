@@ -41,3 +41,11 @@ test('wheel chooses a server-confirmed segment and renders activity slices',()=>
  assert.ok(js.includes('paintWheel(wheelChoices())'),'Wheel must repaint on category change');
  assert.ok(css.includes('container-type:inline-size'),'Mobile labels must scale with frame');
 });
+
+test('weather emoji picker has input, controls, and safe output',()=>{
+ assert.match(html,/id="weatherEmojiPalette"/);
+ assert.match(html,/id="weatherEmoji"/);
+ assert.ok(js.includes("emoji:$('#weatherEmoji').value.trim()"));
+ assert.ok(js.includes('escapeHTML(w.emoji)'));
+ assert.ok(css.includes('.weather-emoji-palette'));
+});
