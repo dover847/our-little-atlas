@@ -1,0 +1,53 @@
+name: Next generation checks
+on:
+  push:
+    branches: [codex/atlas-next-generation]
+  pull_request:
+    paths:
+      - 'next-generation/**'
+      - 'our-little-atlas/**'
+      - '.github/workflows/next-generation-checks.yml'
+      - 'AGENTS.md'
+permissions:
+  contents: read
+jobs:
+  legacy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: our-little-atlas
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - run: node --check server.js
+      - run: node --check public/app.js
+      - run: node --test test/*.test.js
+  rebuild:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: next-generation
+    env:
+      # Public placeholders allow anonymous-route checks without credentials.
+      # No production/preview secrets are available to PR code.
+      NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: test-public-key-no-access
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: next-generation/package-lock.json
+      - run: npm ci
+      - run: npm run build
+      - run: npm run check
+      - run: npm test
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
