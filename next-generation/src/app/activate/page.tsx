@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ActivateForm } from "./form";
+import { ActivateForm, FreshAccessForm } from "./form";
 export default function Activate() {
   return (
     <main className="auth-page">
@@ -15,6 +15,7 @@ export default function Activate() {
           Atlas shared password is separate.
         </p>
         <ActivateForm />
+        <FreshAccessForm />
         <Link className="auth-back" href="/sign-in">
           Already set up? Sign in →
         </Link>

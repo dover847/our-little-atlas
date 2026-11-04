@@ -4,7 +4,9 @@
 
 Individual invitations and private/shared writing are implemented and tested.
 See [milestone-2.md](milestone-2.md) for onboarding, verification and limitations.
-Current preview: https://atlas-next-generation-etvow1q98-my-little-atlas.vercel.app
+Current recovery preview: https://atlas-next-generation-ip1ra4r2r-my-little-atlas.vercel.app
+See [account-activation.md](account-activation.md) for recovery from an unreachable
+email redirect. Its provider configuration remains a separate setup step.
 
 The two requested account emails were accepted by the provider for delivery.
 The owner has an empty preview space; the member invitation awaits verification

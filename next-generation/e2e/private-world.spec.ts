@@ -53,9 +53,25 @@ test("verified accounts, invitations, private writing, sharing and stale edits",
         );
         const page = await ownerContext.newPage();
         await page.goto("/activate");
+        let activationLink = data.properties!.action_link;
+        if (test.info().project.name === "mobile") {
+          const publicClient = createClient(
+            env.NEXT_PUBLIC_SUPABASE_URL!,
+            env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+              env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+            { auth: { persistSession: false, autoRefreshToken: false } },
+          );
+          const { data: verified, error: verificationError } =
+            await publicClient.auth.verifyOtp({
+              token_hash: data.properties!.hashed_token,
+              type: "invite",
+            });
+          expect(verificationError?.message).toBeUndefined();
+          activationLink = `http://localhost:3000/#access_token=${encodeURIComponent(verified.session!.access_token)}&refresh_token=${encodeURIComponent(verified.session!.refresh_token)}`;
+        }
         await page
           .getByLabel("Account confirmation link from your email")
-          .fill(data.properties!.action_link);
+          .fill(activationLink);
         await page.getByLabel("Choose your own password").fill(password);
         await page.getByLabel("Confirm your password").fill(password);
         await page.getByRole("button", { name: "Activate my account" }).click();

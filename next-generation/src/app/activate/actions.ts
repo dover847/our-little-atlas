@@ -2,6 +2,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { ActionResult } from "@/lib/writing";
+import { normalizedEmail } from "@/lib/writing";
 
 export async function activateAccount(
   _previous: ActionResult,
@@ -45,12 +46,12 @@ export async function activateAccount(
       if (
         !hash ||
         hash.length > 256 ||
-        !["invite", "signup", "email"].includes(type || "")
+        !["invite", "signup", "email", "recovery"].includes(type || "")
       )
         return { error: "Paste a valid account confirmation link." };
       const { error } = await client.auth.verifyOtp({
         token_hash: hash,
-        type: type as "invite" | "signup" | "email",
+        type: type as "invite" | "signup" | "email" | "recovery",
       });
       if (error)
         return {
@@ -77,4 +78,32 @@ export async function activateAccount(
     };
   }
   redirect("/space");
+}
+
+export async function requestFreshAccess(
+  _previous: ActionResult,
+  form: FormData,
+): Promise<ActionResult> {
+  try {
+    const email = normalizedEmail(form.get("email"));
+    const client = await createClient();
+    const origin = process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : "http://127.0.0.1:3100";
+    const { error } = await client.auth.resetPasswordForEmail(email, {
+      redirectTo: `${origin}/activate`,
+    });
+    if (error)
+      return {
+        error:
+          "A fresh link could not be requested right now. Please try again in a little while.",
+      };
+    return {
+      error: "",
+      message:
+        "If this address has an Atlas account, a fresh access email is on its way. Copy its confirmation link into the field above before opening it.",
+    };
+  } catch {
+    return { error: "Enter your invited email and try again." };
+  }
 }

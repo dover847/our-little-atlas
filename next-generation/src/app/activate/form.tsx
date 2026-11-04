@@ -2,6 +2,8 @@
 import { useActionState, useEffect, useState } from "react";
 import { activateAccount } from "./actions";
 import { initialResult } from "@/lib/writing";
+import { recoveredSession } from "@/lib/activation";
+import { requestFreshAccess } from "./actions";
 
 export function ActivateForm() {
   const [state, action, pending] = useActionState(
@@ -33,17 +35,28 @@ export function ActivateForm() {
             name="link"
             rows={3}
             value={link}
-            onChange={(e) => setLink(e.target.value)}
+            onChange={(e) => {
+              const session = recoveredSession(e.target.value);
+              if (session) {
+                setTokens(session);
+                setLink("");
+              } else setLink(e.target.value);
+            }}
             autoComplete="off"
             spellCheck={false}
             required
           />
           <p className="field-help">
-            Copy the confirmation button’s link from your Atlas account email
-            and paste it here. This also works if its redirect hasn’t been
-            configured yet.
+            Paste the confirmation button’s link from your email. If you already
+            clicked it and landed on an unreachable page, copy that page’s
+            entire address here instead. Do not send that address in chat.
           </p>
         </>
+      )}
+      {tokens.access && (
+        <p className="field-help" role="status">
+          Your sign-in details were recovered. Choose your own password below.
+        </p>
       )}
       <label htmlFor="new-password">Choose your own password</label>
       <input
@@ -74,5 +87,41 @@ export function ActivateForm() {
         {pending ? "Preparing your account…" : "Activate my account"}
       </button>
     </form>
+  );
+}
+
+export function FreshAccessForm() {
+  const [state, action, pending] = useActionState(
+    requestFreshAccess,
+    initialResult,
+  );
+  return (
+    <details className="registration-details">
+      <summary>Link already used or expired? Request fresh access</summary>
+      <form action={action} className="studio-form">
+        <label htmlFor="access-email">Your invited email</label>
+        <input
+          id="access-email"
+          name="email"
+          type="email"
+          maxLength={254}
+          autoComplete="email"
+          required
+        />
+        {state.error && (
+          <p className="auth-error" role="alert">
+            {state.error}
+          </p>
+        )}
+        {state.message && (
+          <p className="field-help" role="status">
+            {state.message}
+          </p>
+        )}
+        <button className="button-dark" disabled={pending}>
+          {pending ? "Requesting access…" : "Email me a fresh access link"}
+        </button>
+      </form>
+    </details>
   );
 }
