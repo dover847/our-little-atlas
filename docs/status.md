@@ -1,4 +1,18 @@
-# Milestone 1 status — November 3, 2026
+# Project status — November 4, 2026
+
+## Current milestone
+
+Individual invitations and private/shared writing are implemented and tested.
+See [milestone-2.md](milestone-2.md) for onboarding, verification and limitations.
+Current preview: https://atlas-next-generation-etvow1q98-my-little-atlas.vercel.app
+
+The two requested account emails were accepted by the provider for delivery.
+The owner has an empty preview space; the member invitation awaits verification
+and acceptance. No production memories were imported or changed.
+
+The following is the retained milestone-one record, not the latest feature status.
+
+## Milestone 1 record — November 3, 2026
 
 ## Preview
 

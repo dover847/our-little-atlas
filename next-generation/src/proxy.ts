@@ -12,13 +12,25 @@ export async function proxy(request: NextRequest) {
       status: 503,
     });
   const supabase = createServerClient(url, key, {
+    cookieOptions: {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+    },
     cookies: {
       getAll: () => request.cookies.getAll(),
       setAll: (values) => {
         values.forEach(({ name, value }) => request.cookies.set(name, value));
         response = NextResponse.next({ request });
         values.forEach(({ name, value, options }) =>
-          response.cookies.set(name, value, options),
+          response.cookies.set(name, value, {
+            ...options,
+            httpOnly: true,
+            sameSite: "lax",
+            secure: process.env.NODE_ENV === "production",
+            path: "/",
+          }),
         );
       },
     },

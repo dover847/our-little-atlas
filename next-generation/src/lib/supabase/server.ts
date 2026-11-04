@@ -10,13 +10,25 @@ export async function createClient() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (!url || !key) throw new Error("Supabase configuration is missing.");
   return createServerClient(url, key, {
+    cookieOptions: {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+    },
     cookies: {
       getAll: () => jar.getAll(),
       setAll: (values) => {
         // Proxy refreshes cookies for Server Components; actions may set them here.
         try {
           values.forEach(({ name, value, options }) =>
-            jar.set(name, value, options),
+            jar.set(name, value, {
+              ...options,
+              httpOnly: true,
+              sameSite: "lax",
+              secure: process.env.NODE_ENV === "production",
+              path: "/",
+            }),
           );
         } catch {
           /* read-only render */

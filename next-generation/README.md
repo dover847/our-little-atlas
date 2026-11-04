@@ -1,7 +1,7 @@
-# Atlas next generation — milestone 1
+# Atlas next generation — milestones 1–2
 
 An isolated Next.js application built beside the original Atlas. This is an
-exploration and security foundation, **not feature parity or a production release**.
+exploration and private-writing preview, **not feature parity or a production release**.
 
 ## Local development (PowerShell)
 
@@ -22,8 +22,8 @@ Never commit `.env.local`, `.vercel`, password files or production snapshots.
 
 Visit `http://127.0.0.1:3000`. The public exploration surface has only original
 activities and educational copy. Favorites and theme remain browser-local. Spins
-are not persisted or shared. Sign-in uses individual Supabase accounts; no real
-member accounts or invitations are created by setup.
+are not persisted or shared. Sign-in uses individual Supabase accounts. Account
+activation, invitations and writing are documented in `../docs/milestone-2.md`.
 
 ## Checks
 
@@ -41,7 +41,19 @@ environment and refuse a different project reference:
 ```powershell
 npx tsx scripts/setup-preview-db.ts
 npx tsx scripts/verify-preview-rls.ts
+npx tsx scripts/verify-writing-permissions.ts
 ```
+
+For real authenticated browser tests, using only isolated preview credentials:
+
+```powershell
+$env:ATLAS_PREVIEW_AUTH_E2E='1'
+npm run test:e2e
+```
+
+This opt-in creates and cleans up uniquely identified test accounts in the new
+preview project. It sends no invitation emails and never imports real memories.
+Never enable it in a secret-bearing untrusted PR job.
 
 The setup runner is transactional and checksum-idempotent. RLS tests create
 synthetic users/spaces in a transaction and **always roll it back**. They do not
