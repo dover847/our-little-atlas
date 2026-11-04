@@ -53,4 +53,8 @@ test('Atlas preserves old data and supports understanding tools',async t=>{
  const persisted=JSON.parse(fs.readFileSync(file,'utf8'));
  assert.equal(persisted.notes['1'].Danny,'keep this note');
  assert.equal(persisted.mirrors.length,1);
+ const previous=JSON.parse(fs.readFileSync(file+'.previous','utf8'));
+ assert.equal(previous.revision,persisted.revision-1);
+ assert.equal(previous.notes['1'].Danny,'keep this note');
+ assert.equal(previous.journal[0].text,'keep this memory');
 });
