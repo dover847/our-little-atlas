@@ -58,27 +58,17 @@ export default async function AtlasHome() {
       <main>
         <section className="ala-journey" id="journey" aria-label="Our journey between Jerusalem and Shenzhen">
           <div className="ala-map">
-            <svg className="ala-world" viewBox="0 0 640 260" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-              <defs>
-                <linearGradient id="ala-water" x1="0" x2="1" y1="0" y2="1"><stop stopColor="#cfe8d8"/><stop offset=".52" stopColor="#dae7f1"/><stop offset="1" stopColor="#ebdae9"/></linearGradient>
-                <radialGradient id="ala-land"><stop stopColor="#e2ecc5"/><stop offset=".6" stopColor="#f1e5bd"/><stop offset="1" stopColor="#d3dfbb"/></radialGradient>
-              </defs>
-              <rect width="640" height="260" fill="url(#ala-water)"/>
-              <g fill="url(#ala-land)" opacity=".9" stroke="#a8b992" strokeWidth="1.3" strokeLinejoin="round">
-                <path d="M-19 8L105 -5 145 22 135 41 176 55 155 93 127 107 130 144 100 157 116 182 97 207 46 207 34 177 -20 157Z"/>
-                <path d="M189 -15L285 0 306 19 370 2 433 21 489 -3 560 14 620 -1 656 18 645 121 589 115 562 149 515 130 495 157 471 137 437 151 404 112 361 125 339 98 305 117 273 96 247 114 219 83 198 93 179 47Z"/>
-                <path d="M270 111L325 115 352 158 321 189 320 235 278 266 242 220 244 174Z"/>
-                <path d="M450 158L474 160 489 189 476 211 453 195Z"/><path d="M533 173L552 178 577 206 551 220 531 205Z"/>
-              </g>
-              <g fill="none" stroke="#ffffff" opacity=".38" strokeWidth="2">
-                <path d="M0 53Q185 75 310 57T640 45"/><path d="M0 201Q230 178 371 210T640 199"/>
-              </g>
-              <path d="M200 113Q343 29 481 113" stroke="#514e6d" strokeWidth="3" strokeDasharray="8 8" fill="none" strokeLinecap="round" />
-              <path d="M350 57L368 61 378 56 374 66 378 76 364 71 353 80 355 66Z" fill="#8e9ab8" stroke="#fefdf8" strokeWidth="2"/>
-              <circle cx="200" cy="113" r="11" fill="#e3a28e" stroke="#fff" strokeWidth="4"/>
-              <circle cx="481" cy="113" r="11" fill="#dc8caa" stroke="#fff" strokeWidth="4"/>
-              <path d="M339 107c-7-12-25 0 0 19 25-19 7-31 0-19Z" fill="#e8848f" stroke="#fff" strokeWidth="2"/>
-            </svg>
+            <img
+              className="ala-world"
+              src="/maps/jerusalem-shenzhen.svg"
+              width={1024}
+              height={480}
+              alt=""
+              decoding="async"
+              fetchPriority="high"
+            />
+            <span className="ala-map-attribution">Map geography: Natural Earth</span>
+      </svg>
             <div className="ala-city ala-city-left"><div className="ala-city-scene">✧</div><span>Jerusalem ♡</span></div>
             <div className="ala-city ala-city-right"><div className="ala-city-scene ala-shenzhen">✦</div><span>Shenzhen ♡</span></div>
             <div className="ala-note">A world of little discoveries <Heart size={11} fill="currentColor"/></div>
