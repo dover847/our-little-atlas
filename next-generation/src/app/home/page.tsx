@@ -68,7 +68,6 @@ export default async function AtlasHome() {
               fetchPriority="high"
             />
             <span className="ala-map-attribution">Map geography: Natural Earth</span>
-      </svg>
             <div className="ala-city ala-city-left"><div className="ala-city-scene">✧</div><span>Jerusalem ♡</span></div>
             <div className="ala-city ala-city-right"><div className="ala-city-scene ala-shenzhen">✦</div><span>Shenzhen ♡</span></div>
             <div className="ala-note">A world of little discoveries <Heart size={11} fill="currentColor"/></div>
