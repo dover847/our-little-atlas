@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
+import { notifyCompanions } from "@/lib/notifications";
 import { randomUUID } from "node:crypto";
 import { createClient } from "@/lib/supabase/server";
 import { createClient as adminClient } from "@supabase/supabase-js";
@@ -23,6 +24,14 @@ function admin(){
  const key=process.env.SUPABASE_SERVICE_ROLE_KEY;
  if(!url||!key)throw Error("Private Atlas profile storage is unavailable");
  return adminClient(url,key,{auth:{persistSession:false,autoRefreshToken:false}});
+}
+function announceChange(spaceId:string,userId:string){
+ after(async()=>{
+  try{
+   await admin().from("atlas_legacy_activity").insert({space_id:spaceId,actor_id:userId,category:"our shared portraits"});
+   await notifyCompanions(spaceId,userId,"updated","our shared portraits");
+  }catch{console.warn("A portrait was saved without push notification");}
+ });
 }
 function sameOrigin(request:NextRequest){
  const origin=request.headers.get("origin");
@@ -90,6 +99,7 @@ export async function POST(request:NextRequest){
  }
  if(existing?.photo_path&&existing.photo_path!==path)
   await db.storage.from(bucket).remove([existing.photo_path]);
+ announceChange(ctx.spaceId,ctx.userId);
  return reply({ok:true});
 }
 export async function DELETE(request:NextRequest){
@@ -103,5 +113,6 @@ export async function DELETE(request:NextRequest){
   .eq("space_id",ctx.spaceId).eq("user_id",ctx.userId);
  if(error)return reply({error:"Could not remove your portrait"},503);
  if(existing?.photo_path)await db.storage.from(bucket).remove([existing.photo_path]);
+ announceChange(ctx.spaceId,ctx.userId);
  return reply({ok:true});
 }
