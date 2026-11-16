@@ -132,7 +132,10 @@ const weatherPresets=[
  {emoji:'😴',label:'Low energy',color:'#8e9db8',note:''},
  {emoji:'🌧️',label:'A little cloudy',color:'#839ab0',note:''},
  {emoji:'💌',label:'Thinking of you',color:'#e6a1b0',note:''},
- {emoji:'🌈',label:'Hopeful',color:'#a9c9ae',note:''}
+ {emoji:'🌈',label:'Hopeful',color:'#a9c9ae',note:''},
+ {emoji:'😤',label:'Bothered — something needs attention',color:'#c77f54',note:''},
+ {emoji:'😡',label:'Angry — please notice',color:'#b34b55',note:''},
+ {emoji:'🫂',label:'Need some comfort',color:'#9c83b2',note:''}
 ];
 function updateWeatherFavoriteControls(){
  const selected=$('#weatherEmoji').value.trim(),favorite=weatherFavorites.includes(selected);
