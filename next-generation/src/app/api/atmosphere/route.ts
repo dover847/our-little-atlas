@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
+import { notifyCompanions } from "@/lib/notifications";
 import { randomUUID } from "node:crypto";
 import { createClient as createAdminClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
@@ -32,6 +33,21 @@ function admin() {
 function sameOrigin(request: NextRequest) {
   const origin = request.headers.get("origin");
   return !origin || origin === request.nextUrl.origin;
+}
+
+function announceChange(ctx: Context) {
+  // Let the save finish immediately; delivery runs during the server's
+  // post-response lifecycle and cannot roll back the saved background.
+  after(async () => {
+    try {
+      await admin().from("atlas_legacy_activity").insert({
+        space_id:ctx.spaceId,actor_id:ctx.userId,category:"our shared background",
+      });
+      await notifyCompanions(ctx.spaceId,ctx.userId,"updated","our shared background");
+    } catch {
+      console.warn("A shared atmosphere was saved without a push alert");
+    }
+  });
 }
 
 async function snapshot(ctx: Context, withStorage = false) {
@@ -102,6 +118,7 @@ export async function PATCH(request: NextRequest) {
   if(error)return respond({error:"Could not save shared atmosphere"},503);
   if(removePhoto && existing?.background_path)
     await db.storage.from(bucket).remove([existing.background_path]);
+  announceChange(ctx);
   return snapshot(ctx,true);
 }
 
