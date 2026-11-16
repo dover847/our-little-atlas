@@ -66,6 +66,10 @@ $('#noteDialog').addEventListener('close',()=>{activeId=null;editing=false});['#
 for(const person of ['Danny','Mia'])$('#save'+person).onclick=async()=>{try{await api('note',{id:activeId,who:person,text:$('#note'+person).value});editing=false;await refresh();toast(person+"'s note saved") }catch(e){toast(e.message)}};
 function renderEntries(){
  if(!state)return;
+ const pendingReplies=new Map([...document.querySelectorAll('form[data-journal-comment]')].map(
+   form=>[form.dataset.journalComment,form.elements.commentText?.value||'']));
+ const openedReplies=new Set([...document.querySelectorAll('.journal-entry details[open]')].map(
+   details=>details.querySelector('form[data-journal-comment]')?.dataset.journalComment));
  const filter=$('#journalFilter').value;
  const entries=(state.journal||[]).filter(x=>filter==='all'||(x.type||'Memory')===filter);
  $('#entries').innerHTML=entries.map(x=>{
@@ -87,6 +91,12 @@ function renderEntries(){
     </details>
   </article>`;
  }).join('')||'<p class="muted">Nothing written here yet. The first page is yours.</p>';
+ for(const form of document.querySelectorAll('form[data-journal-comment]')){
+   if(pendingReplies.has(form.dataset.journalComment))
+     form.elements.commentText.value=pendingReplies.get(form.dataset.journalComment);
+   if(openedReplies.has(form.dataset.journalComment))
+     form.closest('details').open=true;
+ }
 }
 $('#journalFilter').onchange=renderEntries;
 $('#journalQuickTabs').addEventListener('click',event=>{
@@ -110,6 +120,7 @@ $('#entries').addEventListener('submit',async event=>{
  button.disabled=true;
  try{
    await api('journal-comment',{id:form.dataset.journalComment,text:content});
+   form.elements.commentText.value='';
    await refresh();
    toast('Your reply is now in the shared journal ✦');
  }catch(e){toast(e.message)}
