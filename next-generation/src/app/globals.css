@@ -2311,3 +2311,38 @@ select option {
 @media(max-width:570px) {
   .atlas-classic-bar { font-size: 11px; padding-left: 15px; padding-right: 15px; }
 }
+
+
+/* The same shared atmosphere is visible in the writing studio too.
+   The paper overlay keeps writing legible even over photographs. */
+.private-world {
+  --atlas-shared-image: none;
+  --atlas-shared-accent: #72876c;
+  background-image: linear-gradient(#faf9f5e9,#faf9f5f4),var(--atlas-shared-image);
+  background-position: center, center;
+  background-size: cover, cover;
+  background-attachment: fixed, fixed;
+  min-height: 100dvh;
+}
+.private-world[data-shared-atmosphere="rose"] { --atlas-shared-accent:#a57793; }
+.private-world[data-shared-atmosphere="forest"] { --atlas-shared-accent:#658c73; }
+.private-world[data-shared-atmosphere="ocean"] { --atlas-shared-accent:#527c9a; }
+.private-world[data-shared-atmosphere="violet"] { --atlas-shared-accent:#8974ac; }
+.private-world[data-shared-atmosphere="sunrise"] { --atlas-shared-accent:#bc8c56; }
+.private-world[data-shared-atmosphere="twilight"] { --atlas-shared-accent:#6b83ba; }
+.private-world .private-hero {
+  border-left:3px solid var(--atlas-shared-accent);
+  background-image:linear-gradient(135deg,transparent,#ffffff35);
+}
+.shared-atmosphere-caption {
+  text-align:right;
+  font-size:11px;
+  line-height:1.5;
+  color:var(--muted);
+  margin:10px 0 16px;
+}
+.shared-atmosphere-caption a {
+  color:var(--ink);
+  text-decoration:underline;
+  text-underline-offset:3px;
+}
