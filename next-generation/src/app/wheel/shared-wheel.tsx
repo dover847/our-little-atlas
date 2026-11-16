@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { PresencePulse } from "@/components/presence-pulse";
 import { SharedThemeSync } from "@/components/shared-theme-sync";
+import { ProfilePair } from "@/components/profile-pair";
 
 type Activity = {id:number;title:string;description:string;category:string};
 type Spin = {id:number;who:string;at:string};
@@ -95,7 +96,7 @@ export function SharedWheel({spaceId}:{spaceId:string}){
    if(!selected)throw Error("Your activity selection changed. Please spin again.");
    const index=chapterOf(selected);
    const target=(360-(index*45)%360)%360;
-   const next=Math.ceil((angleRef.current+1440)/360)*360+target;
+   const next=Math.ceil((angleRef.current+4320)/360)*360+target;
    angleRef.current=next;setAngle(next);
    const reduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
    spinTimer.current=setTimeout(()=>{
@@ -104,7 +105,7 @@ export function SharedWheel({spaceId}:{spaceId:string}){
     setStatus("Chosen for us · "+selected.category);
     setSpinning(false);spinningRef.current=false;
     void refresh();
-   },reduced?100:3100);
+   },reduced?100:10400);
   }catch(e){
    setError(e instanceof Error?e.message:"The wheel couldn't spin.");
    setSpinning(false);spinningRef.current=false;
@@ -130,11 +131,7 @@ export function SharedWheel({spaceId}:{spaceId:string}){
    </div>
   </header>
   <main className="wheel-main">
-   <div className="wheel-people">
-    <div className="wheel-person"><div className="wheel-person-photo">D</div><span>Danny</span></div>
-    <div className="wheel-bond" aria-hidden="true">♡</div>
-    <div className="wheel-person"><div className="wheel-person-photo mia">M</div><span>Mia</span></div>
-   </div>
+   <ProfilePair/>
    <div className="wheel-connected"><PresencePulse spaceId={spaceId}/></div>
    <div className="wheel-location"><Compass size={14}/> Jerusalem <Heart size={13} fill="currentColor"/> Shenzhen, China</div>
    <div className="wheel-picker">
@@ -166,16 +163,16 @@ export function SharedWheel({spaceId}:{spaceId:string}){
     <span>✦ OUR NEXT ADVENTURE</span>
     <h2>{result.title}</h2>
     <p>{result.description}</p>
-    <Link href="/full-atlas?tab=library">Open in our Atlas <ChevronRight size={17}/></Link>
+    <Link href={"/atlas?tab=library&activity="+selected.id}>Open in our Atlas <ChevronRight size={17}/></Link>
    </div>}
    <div className="wheel-shortcuts">
-    <Link href="/full-atlas?tab=library"><NotebookPen size={24}/><span>Shared<br/>Notes</span></Link>
-    <Link href="/full-atlas?tab=journal"><BookOpen size={24}/><span>Journals</span></Link>
-    <Link href="/full-atlas?tab=weather"><Flower2 size={24}/><span>Emotional<br/>Weather</span></Link>
-    <Link href="/full-atlas?tab=capsules"><Images size={24}/><span>Time<br/>Capsule</span></Link>
+    <Link href="/atlas?tab=library"><NotebookPen size={24}/><span>Shared<br/>Notes</span></Link>
+    <Link href="/atlas?tab=journal"><BookOpen size={24}/><span>Journals</span></Link>
+    <Link href="/atlas?tab=weather"><Flower2 size={24}/><span>Emotional<br/>Weather</span></Link>
+    <Link href="/atlas?tab=capsules"><Images size={24}/><span>Time<br/>Capsule</span></Link>
    </div>
    <section className="wheel-today">
-    <div className="wheel-section-title"><h2>Today in Our Atlas ♡</h2><Link href="/full-atlas">See all <ChevronRight size={14}/></Link></div>
+    <div className="wheel-section-title"><h2>Today in Our Atlas ♡</h2><Link href="/atlas">See all <ChevronRight size={14}/></Link></div>
     {spinHistory.length?
       <div className="wheel-history">{spinHistory.map((item,index)=>{
        const selected=byId(atlas?.activities||[],item.id);
@@ -187,10 +184,10 @@ export function SharedWheel({spaceId}:{spaceId:string}){
   </main>
   <nav className="wheel-bottom" aria-label="Wheel home navigation">
    <Link href="/home"><Compass size={20}/>Home</Link>
-   <Link href="/full-atlas?tab=library"><Orbit size={20}/>Atlas</Link>
+   <Link href="/atlas?tab=library"><Orbit size={20}/>Atlas</Link>
    <Link href="/wheel" className="selected"><Heart size={20}/>Wheel</Link>
-   <Link href="/full-atlas?tab=journal"><BookOpen size={20}/>Journal</Link>
-   <Link href="/full-atlas?tab=memories"><Images size={20}/>Gallery</Link>
+   <Link href="/atlas?tab=journal"><BookOpen size={20}/>Journal</Link>
+   <Link href="/atlas?tab=memories"><Images size={20}/>Gallery</Link>
    <Link href={"/space/"+spaceId}><Menu size={20}/>Us</Link>
   </nav>
  </div>
