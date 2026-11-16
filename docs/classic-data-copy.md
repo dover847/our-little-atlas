@@ -70,3 +70,44 @@ settings remain accessible at `/space`.
 - The modern Next writing studio uses its own separate writing entries.
   The original journal appears in the full Classic Atlas page.
 - Existing Render disk and original website are retained as backup.
+
+
+## Shared atmosphere, storage and startup performance (2026-11-16 update)
+
+- The full Atlas shell is statically prerendered at `/full-atlas`. The
+  classic HTML/CSS/JS is served as cached same-origin static assets, rather
+  than blocking page display on Supabase Auth and a membership query.
+- Authenticated data remains protected at `/api/legacy/state`. The server
+  checks identity and membership before sending the archive, and never reveals
+  unopened capsule text or image paths.
+- The original UI's data polling interval is 12 seconds instead of 4 seconds.
+  Background synchronization checks every 9 seconds while the page is visible
+  and on focus. Alerts are dispatched after the save response when supported.
+- The previous five browser-local color themes are now a **shared theme**,
+  with sunrise and twilight added, plus a shared accent color. Either member
+  can change it; both receive the same shared setting and selected photo.
+- Background photos are resized on-device and uploaded to Supabase Storage in
+  the private `atlas-shared-media` bucket (max 1.2 MB/image). They are served
+  only via signed URLs issued to authenticated space members. The shared
+  setting and its last editor are stored in `public.atlas_atmospheres`.
+- Newly created photo time capsules also store their photo bytes privately in
+  the same bucket instead of bloating the shared JSON document. Signed URLs
+  are minted only after each capsule's opening date.
+- The shared storage meter shows stored media files/bytes, original archive
+  size, and new writing-page count. PostgreSQL database size includes platform
+  overhead and is not the same as user media storage.
+- The prior journal's multiple writing types now have quick tabs, and
+  individual journal entries accept attributed replies. The activity wheel
+  shows recent spins and avoids recently selected activities when possible.
+  Emotional Weather includes explicit bothered, angry and comfort presets.
+- The `public.atlas_archive_versions` table retains an inaccessible-to-client
+  snapshot of the previous document on each change, providing an owner-side
+  recovery route without exposing private history to browsers.
+- New background and shared-writing changes enter the shared activity feed
+  and optional opt-in Web Push, without including journal contents in
+  lock-screen previews.
+
+Important: real push delivery and two-device visual synchronization still
+require both users to have an authenticated running client. The implementation
+is live but production monitoring and hands-on device tests are distinct
+from deployment/build and access-control checks.
