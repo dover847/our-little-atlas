@@ -11,16 +11,17 @@ const response = (data: Record<string, unknown>, status = 200) =>
   NextResponse.json(data, { status, headers: noCache });
 
 async function getContext(request: NextRequest) {
-  const spaceId = request.nextUrl.searchParams.get("spaceId") || "";
-  if (!/^[a-f0-9-]{36}$/i.test(spaceId)) return null;
+  const wantedSpace = request.nextUrl.searchParams.get("spaceId") || "";
+  if (wantedSpace && !/^[a-f0-9-]{36}$/i.test(wantedSpace)) return null;
   const client = await createClient();
   const { data: { user }, error: authError } = await client.auth.getUser();
   if (authError || !user?.email_confirmed_at) return null;
-  const { data: membership, error: membershipError } = await client
-    .from("space_memberships").select("space_id")
-    .eq("space_id", spaceId).eq("user_id", user.id).maybeSingle();
+  let membershipQuery = client.from("space_memberships").select("space_id").eq("user_id", user.id);
+  if (wantedSpace) membershipQuery = membershipQuery.eq("space_id", wantedSpace);
+  const { data: membership, error: membershipError } =
+    await membershipQuery.limit(1).maybeSingle();
   if (membershipError || !membership) return null;
-  return { spaceId, userId: user.id };
+  return { spaceId: membership.space_id as string, userId: user.id };
 }
 
 function database() {
