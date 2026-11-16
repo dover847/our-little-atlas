@@ -9,7 +9,7 @@ async function refresh(){try{const latest=await api('state');const previous=stat
     if($('#saveMia'))$('#saveMia').disabled=who()!=='Mia';
     if($('#noteDanny'))$('#noteDanny').readOnly=who()!=='Danny';
     if($('#noteMia'))$('#noteMia').readOnly=who()!=='Mia';
-    renderCapsules();renderMemoryGallery();if(previous!==state.revision){updateCategories();renderWheel();renderActivities();renderEntries();renderIdeas();renderWeather();renderUnderstanding();if(activeId!==null&&!editing)fillNotes(activeId)}}catch(e){if(/sign in|sign-in/i.test(e.message)){window.top.location.href='/sign-in'}}}
+    renderCapsules();renderMemoryGallery();if(previous!==state.revision){updateCategories();renderWheel();renderSpinHistory();renderActivities();renderEntries();renderIdeas();renderWeather();renderUnderstanding();if(activeId!==null&&!editing)fillNotes(activeId)}}catch(e){if(/sign in|sign-in/i.test(e.message)){window.top.location.href='/sign-in'}}}
 $('#loginForm').addEventListener('submit',e=>{e.preventDefault();window.location.href='/sign-in'});
 const tabs=document.querySelectorAll('.tabs button');tabs.forEach(b=>b.onclick=()=>{tabs.forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===b.dataset.tab))});
 function updateCategories(){if(!state)return;for(const selector of ['#wheelCategory','#filter','#topicCategory']){const el=$(selector),old=el.value;const first=selector==='#topicCategory'?['Our inventions']:(selector==='#filter'?['all','favorites']:['all']);const cats=[...new Set(state.activities.map(a=>a.category))];const options=selector==='#topicCategory'?[...new Set([...first,...cats])]:[...first,...cats];el.innerHTML='';for(const value of options){const label=value==='all'?(selector==='#filter'?'All chapters':'Anything goes'):value==='favorites'?'Our favorites ♡':value;el.add(new Option(label,value))}el.value=options.includes(old)?old:options[0]}}
@@ -25,6 +25,17 @@ function paintWheel(choices){
  disc.setAttribute('aria-label',n+' possible activities');
 }
 function renderWheel(){if(!state)return;const choices=wheelChoices();if(!spinning&&wheelIds.join(',')!==choices.map(a=>a.id).join(','))paintWheel(choices);const a=state.activities.find(a=>a.id===state.selected);if(a&&!spinning){$('#result').innerHTML=`<span class="eyebrow">Our latest adventure · ${escapeHTML(a.category)}</span><h3>${escapeHTML(a.title)}</h3><p>${escapeHTML(a.description)}</p><button id="openResult">Open our notes ↗</button>`;$('#openResult').onclick=()=>openNotes(a.id)}}
+function renderSpinHistory(){
+ const element=$('#spinHistory');
+ if(!element||!state)return;
+ const spins=Array.isArray(state.spins)?state.spins.slice(0,8):[];
+ element.innerHTML=spins.map(record=>{
+   const adventure=state.activities.find(item=>item.id===record.id);
+   const title=adventure?adventure.title:'A past adventure';
+   const time=record.at?new Date(record.at).toLocaleDateString():'';
+   return '<span class="spin-history-chip">'+escapeHTML(title)+' <small>· '+escapeHTML(record.who||'Us')+(time?' · '+escapeHTML(time):'')+'</small></span>';
+ }).join('')||'<p class="muted">The wheel will remember our next adventures.</p>';
+}
 $('#wheelCategory').addEventListener('change',()=>{if(!spinning)paintWheel(wheelChoices())});
 $('#spin').onclick=async()=>{
  if(spinning||!state)return;
@@ -53,8 +64,57 @@ function fillNotes(id){const n=state.notes[id]||{};$('#noteDanny').value=n.Danny
 function openNotes(id){activeId=id;const a=state.activities.find(x=>x.id===id);$('#dialogCategory').textContent=a.category+' · '+String(id).padStart(2,'0');$('#dialogTitle').textContent=a.title;$('#dialogDesc').textContent=a.description;fillNotes(id);$('#noteDialog').showModal()}
 $('#noteDialog').addEventListener('close',()=>{activeId=null;editing=false});['#noteDanny','#noteMia'].forEach(id=>$(id).addEventListener('input',()=>editing=true));
 for(const person of ['Danny','Mia'])$('#save'+person).onclick=async()=>{try{await api('note',{id:activeId,who:person,text:$('#note'+person).value});editing=false;await refresh();toast(person+"'s note saved") }catch(e){toast(e.message)}};
-function renderEntries(){if(!state)return;const filter=$('#journalFilter').value;$('#entries').innerHTML=(state.journal||[]).filter(x=>filter==='all'||(x.type||'Memory')===filter).map(x=>`<article class="entry"><small>${escapeHTML(x.who)} · ${escapeHTML(x.type||'Memory')} · ${new Date(x.at).toLocaleDateString()}${x.mood?' · '+escapeHTML(x.mood):''}</small>${x.title?'<h3>'+escapeHTML(x.title)+'</h3>':''}<p>${escapeHTML(x.text)}</p></article>`).join('')||'<p class="muted">Nothing written here yet. The first page is yours.</p>'}
+function renderEntries(){
+ if(!state)return;
+ const filter=$('#journalFilter').value;
+ const entries=(state.journal||[]).filter(x=>filter==='all'||(x.type||'Memory')===filter);
+ $('#entries').innerHTML=entries.map(x=>{
+  const id=escapeHTML(String(x.id||''));
+  const comments=Array.isArray(x.comments)?x.comments:[];
+  const replies=comments.map(reply=>`<div class="journal-reply"><small>${escapeHTML(reply.who)} · ${new Date(reply.at).toLocaleDateString()}</small><p>${escapeHTML(reply.text)}</p></div>`).join('');
+  return `<article class="entry journal-entry">
+    <small>${escapeHTML(x.who)} · ${escapeHTML(x.type||'Memory')} · ${new Date(x.at).toLocaleDateString()}${x.mood?' · '+escapeHTML(x.mood):''}</small>
+    ${x.title?'<h3>'+escapeHTML(x.title)+'</h3>':''}
+    <p class="journal-content">${escapeHTML(x.text)}</p>
+    <details class="journal-thread" ${comments.length?'':' '}><summary>Our conversation · ${comments.length} repl${comments.length===1?'y':'ies'}</summary>
+      <div class="journal-replies">${replies||'<p class="muted">The first reply is yours.</p>'}</div>
+      <form data-journal-comment="${id}" class="journal-reply-form">
+        <label>Reply to this page
+          <textarea name="commentText" maxlength="1200" rows="2" required placeholder="A thought, a question, a little recognition…"></textarea>
+        </label>
+        <button class="small" type="submit">Add our reply ↗</button>
+      </form>
+    </details>
+  </article>`;
+ }).join('')||'<p class="muted">Nothing written here yet. The first page is yours.</p>';
+}
 $('#journalFilter').onchange=renderEntries;
+$('#journalQuickTabs').addEventListener('click',event=>{
+ const button=event.target.closest('button[data-journal-type]');
+ if(!button)return;
+ const type=button.dataset.journalType;
+ $('#journalType').value=type;
+ $('#journalFilter').value=type;
+ renderEntries();
+ document.querySelectorAll('#journalQuickTabs button').forEach(item=>
+   item.classList.toggle('selected',item===button));
+ $('#journalTitle').focus();
+});
+$('#entries').addEventListener('submit',async event=>{
+ const form=event.target.closest('form[data-journal-comment]');
+ if(!form)return;
+ event.preventDefault();
+ const content=form.elements.commentText.value.trim();
+ if(!content)return;
+ const button=form.querySelector('button');
+ button.disabled=true;
+ try{
+   await api('journal-comment',{id:form.dataset.journalComment,text:content});
+   await refresh();
+   toast('Your reply is now in the shared journal ✦');
+ }catch(e){toast(e.message)}
+ finally{button.disabled=false}
+});
 const weatherEmojis=['😊','🥰','😍','😘','😌','😇','🤗','🫶','❤️','💕','💖','✨','🌸','🌞','🌈','🥹','🥲','😢','😭','😔','😞','😩','😫','🥺','😳','😅','😂','🤣','😆','😏','😎','🤔','🧐','😶','😐','🙃','😬','😑','😴','🥱','😵‍💫','😤','😠','😡','🤯','😱','😨','😰','😓','🤒','🤧','🤢','😷','🤪','😜','😋','😝','🤭','🫣','🫠','💤','💔','💗','💭','☁️','🌧️','⛈️','🌙','🍀','🌻','🐱','🐰','🐼','🙈','🙉','🙊','👍','👏','🙏','💪','👀','👋','🤝','💐','🎉','😚','☺️','😙','😗','🤩','😒','🙄','😮‍💨','😪','😮','😯','😲','🤐','🤫','🫢','🤥','🤨','😕','🙁','☹️','😣','😖','😟','😦','😧','😮‍💨','🫨','😈','👻','💀','🤡','👽','🧡','💛','💚','💙','💜','🤍','🩷','🩵','🩶','🖤','💞','💓','💘','💝','💟','💌','🫂','🌹','🌷','🌺','🌼','🌿','🌱','⭐','🌟','☀️','🌤️','🌦️','🌫️','❄️','🌊','🔥','🍵','☕','🍓','🍑','🍬','🎀','🧸','🎁','🎵','🎶','🕊️','🐣','🐻','🐶','🐸','🐧','🐯','🦋','💃','🧘','🙋','🙇','🙅','🙆','🤦','🤷','👌','✌️','🤞','🤟','🤙','🫰','🤲','✊','👊','🤜','🤛','💅','🫵','💯','❣️','‼️','❓','❗'];
 const chineseWeatherExpressions=[
  ['🤦','捂脸','facepalm embarrassed helpless'],['🤭','偷笑','secret laugh snicker'],['🤣','笑哭','laugh crying'],['🥹','破涕为笑','tears to smile moved'],['😏','坏笑','mischievous smile'],['🙄','白眼','eye roll'],['😒','鄙视','disdain'],['😌','悠闲','relaxed peaceful'],['🥰','喜欢','affection fondness'],['😘','飞吻','blowing kiss'],['🫶','比心','finger heart love'],['🫰','比心','finger heart'],['🥺','委屈','aggrieved pout'],['😭','大哭','crying'],['😢','流泪','tears'],['😔','难过','sad'],['😮‍💨','叹气','sigh'],['😤','生气','annoyed'],['😡','发怒','angry'],['😳','害羞','shy blushing'],['🤗','抱抱','hug'],['🫂','拥抱','embrace'],['🥱','困','sleepy'],['😴','睡觉','sleeping'],['🤔','疑问','question thinking'],['😶','无语','speechless'],['😅','尴尬','awkward'],['🫠','融化','melting overwhelmed'],['🤪','调皮','playful'],['😜','吐舌','tongue teasing'],['🤫','嘘','shush'],['🫣','偷偷看','peeking'],['👀','吃瓜','watching drama gossip'],['🍉','吃瓜','watching gossip'],['💪','加油','cheering encouragement'],['🙏','拜托','please request'],['👍','赞','approval'],['👏','鼓掌','applause'],['🎉','庆祝','celebrating'],['💐','送花','flowers'],['❤️','爱你','love you'],['💗','心动','heart flutter'],['💌','想你','missing you'],['🐱','撒娇','cute coquettish'],['🥰','甜蜜','sweet affectionate'],['🌙','晚安','good night'],['☀️','早安','good morning'],['☁️','低气压','low mood'],['🌧️','心情不好','bad mood rainy'],['🌈','雨过天晴','hope after rain'],['😮','惊讶','surprised'],['😱','震惊','shocked'],['🫡','收到','understood acknowledged'],['🙇','谢谢','thank you'],['🥲','苦笑','bitter smile'],['🤨','怀疑','skeptical'],['😵‍💫','晕','dizzy'],['🫢','惊讶','gasp'],['💤','摆烂','giving up tired'],['🧸','求安慰','need comfort'],['🥺','求抱抱','want a hug'],['🤍','安心','reassured']
