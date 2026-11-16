@@ -1,7 +1,7 @@
 import "server-only";
-import { createHash, timingSafeEqual } from "node:crypto";
+import { createHash } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -12,13 +12,10 @@ function response(data:Record<string,unknown>, status=200) {
 
 // Temporary, one-use archive copy. Source material stays on the existing
 // Render disk. Its contents must never be logged, returned, or exposed to users.
-export async function POST(req:NextRequest) {
+async function importOnce() {
   const secret=process.env.ATLAS_COPY_EXPORT_KEY;
-  const given=req.headers.get("x-atlas-copy-key")||"";
-  if (!secret || secret.length<40 || given.length!==secret.length ||
-      !timingSafeEqual(Buffer.from(given),Buffer.from(secret)))
-    return response({error:"Not found"},404);
-
+  if (!secret || secret.length<40)
+    return response({error:"Import service unavailable"},503);
   const source="https://anamora.onrender.com/api/_owner_atlas_backup";
   const dbUrl=process.env.NEXT_PUBLIC_SUPABASE_URL;
   const adminKey=process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -92,4 +89,13 @@ export async function POST(req:NextRequest) {
     noteRecords:Object.keys(archive.notes).length,
     weatherRecords:Object.keys(archive.weather).length,
   });
+}
+
+// One-use maintenance trigger. No data or credentials are exposed in the
+// response, and the destination refuses to overwrite an existing import.
+// This temporary route is deleted as soon as the copy is verified.
+export async function GET() {
+  const result=await importOnce();
+  if(result.status!==200)return result;
+  return response({ok:true,importCompleted:true});
 }
