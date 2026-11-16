@@ -6,7 +6,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "Our Little Atlas",
     short_name: "Our Atlas",
     description: "A private little world for two curious minds.",
-    start_url: "/space",
+    start_url: "/full-atlas",
     scope: "/",
     display: "standalone",
     orientation: "any",
