@@ -3,13 +3,23 @@ const escapeHTML=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;'
 const who=()=>state?.viewer||'Danny';
 const toast=s=>{const t=$('#toast');t.textContent=s;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2700)};
 async function api(route,data){const r=await fetch('/api/legacy/'+route,{method:data?'POST':'GET',headers:{'Content-Type':'application/json'},body:data?JSON.stringify(data):undefined});const j=await r.json();if(!r.ok)throw Error(j.error||'Something went wrong');return j}
-async function refresh(){try{const latest=await api('state');const previous=state?.revision;state=latest;
+async function refresh(){
+ const live=document.querySelector('.who .live');
+ if(!state&&live)live.textContent='◌ Connecting our Atlas…';
+ try{
+   const latest=await api('state');
+   if(live)live.textContent='● Together · Atlas is ready';
+   const previous=state?.revision;
+   state=latest;
     if($('#who')){$('#who').value=who();$('#who').disabled=true}
     if($('#saveDanny'))$('#saveDanny').disabled=who()!=='Danny';
     if($('#saveMia'))$('#saveMia').disabled=who()!=='Mia';
     if($('#noteDanny'))$('#noteDanny').readOnly=who()!=='Danny';
     if($('#noteMia'))$('#noteMia').readOnly=who()!=='Mia';
-    renderCapsules();renderMemoryGallery();if(previous!==state.revision){updateCategories();renderWheel();renderSpinHistory();renderActivities();renderEntries();renderIdeas();renderWeather();renderUnderstanding();if(activeId!==null&&!editing)fillNotes(activeId)}}catch(e){if(/sign in|sign-in/i.test(e.message)){window.top.location.href='/sign-in'}}}
+    renderCapsules();renderMemoryGallery();if(previous!==state.revision){updateCategories();renderWheel();renderSpinHistory();renderActivities();renderEntries();renderIdeas();renderWeather();renderUnderstanding();if(activeId!==null&&!editing)fillNotes(activeId)}}catch(e){
+ if(/sign in|sign-in/i.test(e.message)){window.top.location.href='/sign-in';return}
+ if(live)live.textContent='◌ Connection is slow · retrying automatically';
+}}
 $('#loginForm').addEventListener('submit',e=>{e.preventDefault();window.location.href='/sign-in'});
 const tabs=document.querySelectorAll('.tabs button');tabs.forEach(b=>b.onclick=()=>{tabs.forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===b.dataset.tab))});
 function updateCategories(){if(!state)return;for(const selector of ['#wheelCategory','#filter','#topicCategory']){const el=$(selector),old=el.value;const first=selector==='#topicCategory'?['Our inventions']:(selector==='#filter'?['all','favorites']:['all']);const cats=[...new Set(state.activities.map(a=>a.category))];const options=selector==='#topicCategory'?[...new Set([...first,...cats])]:[...first,...cats];el.innerHTML='';for(const value of options){const label=value==='all'?(selector==='#filter'?'All chapters':'Anything goes'):value==='favorites'?'Our favorites ♡':value;el.add(new Option(label,value))}el.value=options.includes(old)?old:options[0]}}
