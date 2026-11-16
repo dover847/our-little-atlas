@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { createClient as createAdminClient } from "@supabase/supabase-js";
 import { displayedLegacy, updateLegacy, type AtlasPerson, type LegacyArchive } from "@/lib/legacy-reducer";
 import { notifyCompanions } from "@/lib/notifications";
 
@@ -9,6 +10,15 @@ export const dynamic = "force-dynamic";
 const headers = { "Cache-Control": "private, no-store", "X-Content-Type-Options": "nosniff" };
 const reply = (payload: Record<string,unknown>, status=200) =>
   NextResponse.json(payload,{status,headers});
+function createPrivateArchiveReader() {
+  const url=process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key=process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if(!url||!key)throw new Error("Original Atlas archive server configuration is missing");
+  // Never import a private archive with a user-scoped Supabase client:
+  // table SELECT is intentionally denied to browsers to keep capsules sealed.
+  return createAdminClient(url,key,{auth:{persistSession:false,autoRefreshToken:false}});
+}
+
 const actionNames = new Set([
   "spin","note","favorite","topic","idea","journal","assumption","clarity",
   "clarity-reply","mirror","mirror-answer","capsule","weather",
@@ -33,7 +43,7 @@ export async function GET(
   if ((await params).action!=="state") return reply({error:"Not found"},404);
   const auth=await context();
   if (!auth) return reply({error:"Please sign in to Atlas"},401);
-  const {data,error} = await auth.client
+  const {data,error} = await createPrivateArchiveReader()
     .from("atlas_legacy_state").select("state,revision")
     .eq("space_id",auth.spaceId).maybeSingle();
   if (error) return reply({error:"Atlas features are temporarily unavailable"},503);
@@ -64,7 +74,7 @@ export async function POST(
   } catch {return reply({error:"Invalid form"},400);}
 
   for(let attempt=0;attempt<4;attempt++){
-    const {data,error}=await auth.client.from("atlas_legacy_state")
+    const {data,error}=await createPrivateArchiveReader().from("atlas_legacy_state")
       .select("state,revision").eq("space_id",auth.spaceId).maybeSingle();
     if(error||!data) return reply({error:"Original Atlas data is unavailable"},503);
     let change:ReturnType<typeof updateLegacy>;
