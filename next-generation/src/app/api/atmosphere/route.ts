@@ -163,5 +163,6 @@ export async function POST(request: NextRequest) {
   }
   if(previous?.background_path)
     await db.storage.from(bucket).remove([previous.background_path]);
+  announceChange(ctx);
   return snapshot(ctx);
 }
