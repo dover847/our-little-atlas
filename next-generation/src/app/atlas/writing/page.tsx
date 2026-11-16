@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Bell, BookOpen, Compass, Feather, Heart, Map, Orbit, Palette, Settings2 } from "lucide-react";
+import { Bell, BookOpen, Compass, Feather, Heart, Map as MapIcon, Orbit, Palette, Settings2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { WritingStudio } from "@/components/writing-studio";
 import { ActivityAndNotifications, type AtlasEvent } from "@/components/activity-notifications";
@@ -87,7 +87,7 @@ export default async function AtlasWriting(){
    <div className="atlas-modern-footnote">Our shared pages are yours to write, revise and revisit.</div>
   </main>
   <nav className="atlas-modern-bottom" aria-label="App navigation">
-   <Link href="/home"><Map size={19}/>Home</Link>
+   <Link href="/home"><MapIcon size={19}/>Home</Link>
    <Link href="/wheel"><Orbit size={19}/>Wheel</Link>
    <Link href="/atlas"><Compass size={19}/>Atlas</Link>
    <Link href="/atlas/writing" className="selected"><Feather size={19}/>Writing</Link>
