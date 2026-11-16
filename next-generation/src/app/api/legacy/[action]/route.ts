@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { randomUUID } from "node:crypto";
 import { createClient } from "@/lib/supabase/server";
 import { createClient as createAdminClient } from "@supabase/supabase-js";
 import { displayedLegacy, updateLegacy, type AtlasPerson, type LegacyArchive } from "@/lib/legacy-reducer";
@@ -6,6 +7,7 @@ import { notifyCompanions } from "@/lib/notifications";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+export const preferredRegion = "fra1";
 
 const headers = { "Cache-Control": "private, no-store", "X-Content-Type-Options": "nosniff" };
 const reply = (payload: Record<string,unknown>, status=200) =>
@@ -48,7 +50,26 @@ export async function GET(
     .eq("space_id",auth.spaceId).maybeSingle();
   if (error) return reply({error:"Atlas features are temporarily unavailable"},503);
   if (!data) return reply({error:"Your original Atlas data is being prepared."},503);
-  return reply(displayedLegacy(data.state as LegacyArchive,auth.who));
+  const visible = displayedLegacy(data.state as LegacyArchive,auth.who);
+  // Photos belonging to sealed capsules cannot receive a signed URL.
+  const opened = (visible.capsules||[]).filter(
+    (capsule: Record<string,unknown>) => !capsule.sealed &&
+      typeof capsule.photoPath==="string" &&
+      String(capsule.photoPath).startsWith(`spaces/${auth.spaceId}/capsules/`)
+  );
+  if(opened.length){
+    const paths=opened.map((capsule: Record<string,unknown>)=>String(capsule.photoPath));
+    const {data:urls,error:photosError} = await createPrivateArchiveReader()
+      .storage.from("atlas-shared-media").createSignedUrls(paths,3600);
+    if(!photosError && urls){
+      opened.forEach((capsule: Record<string,unknown>,i:number)=>{
+        capsule.photo=urls[i]?.signedUrl||"";
+      });
+    }
+  }
+  // Do not expose internal storage paths, even for already-opened capsules.
+  for(const capsule of visible.capsules||[])delete capsule.photoPath;
+  return reply(visible);
 }
 
 export async function POST(
@@ -83,6 +104,25 @@ export async function POST(
     } catch(e) {
       return reply({error:e instanceof Error?e.message:"Invalid action"},400);
     }
+    let uploadedCapsulePath:string|null=null;
+    if(action==="capsule" && change.state.capsules?.[0]?.photo){
+      const capsule=change.state.capsules[0];
+      const match=/^data:image\/(jpeg|png|webp);base64,([A-Za-z0-9+/]+={0,2})$/.exec(capsule.photo);
+      if(!match)return reply({error:"This capsule photo format is invalid"},400);
+      const bytes=Buffer.from(match[2],"base64");
+      if(bytes.length<12||bytes.length>135000)
+        return reply({error:"This capsule photo exceeds the storage limit"},413);
+      const ext=match[1]==="jpeg"?"jpg":match[1];
+      uploadedCapsulePath=`spaces/${auth.spaceId}/capsules/${randomUUID()}.${ext}`;
+      const {error:uploadError}=await createPrivateArchiveReader()
+        .storage.from("atlas-shared-media").upload(uploadedCapsulePath,bytes,{
+          contentType:`image/${match[1]}`,upsert:false,cacheControl:"3600",
+        });
+      if(uploadError)return reply({error:"Could not safely store that capsule photo"},503);
+      // The archive holds a reference, never a large base64 photo.
+      capsule.photo="";
+      capsule.photoPath=uploadedCapsulePath;
+    }
     // Version-gated update and activity record are one database transaction.
     const {data:saved,error:saveError}=await auth.client.rpc("atlas_update_legacy",{
       target_space:auth.spaceId,
@@ -90,8 +130,13 @@ export async function POST(
       new_state:change.state,
       category:change.category,
     });
-    if(saveError) return reply({error:"Could not save that change right now"},503);
-    if(!saved)continue;
+    if(saveError||!saved){
+      if(uploadedCapsulePath)
+        await createPrivateArchiveReader().storage.from("atlas-shared-media")
+          .remove([uploadedCapsulePath]);
+      if(saveError)return reply({error:"Could not save that change right now"},503);
+      continue;
+    }
     // A push failure must never undo a saved entry.
     try {
       await notifyCompanions(auth.spaceId,auth.user.id,"updated",change.category);
