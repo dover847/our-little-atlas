@@ -45,7 +45,9 @@ jobs:
           node-version: '24'
           cache: npm
           cache-dependency-path: next-generation/package-lock.json
-      - run: npm ci
+      # The existing package-lock predates the push dependencies; install as Vercel does.
+      # Recommit a synchronized lock file before restoring reproducible npm ci.
+      - run: npm install --no-audit --no-fund
       - run: npm run build
       - run: npm run check
       - run: npm test
