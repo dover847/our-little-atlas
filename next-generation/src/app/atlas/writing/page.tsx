@@ -7,6 +7,7 @@ import { ActivityAndNotifications, type AtlasEvent } from "@/components/activity
 import { SharedThemeSync } from "@/components/shared-theme-sync";
 import { PresencePulse } from "@/components/presence-pulse";
 import { InvitationForm } from "@/app/space/forms";
+import { revokeInvitation } from "@/app/space/actions";
 import type { Writing, WritingRevision } from "@/lib/writing";
 import "../modern-atlas.css";
 import "./writing.css";
@@ -20,13 +21,14 @@ export default async function AtlasWriting(){
   .from("space_memberships").select("space_id,role").eq("user_id",user.id).limit(1).maybeSingle();
  if(membershipError||!membership)redirect("/space");
  const spaceId=membership.space_id as string;
- const [writing,events,classic,memberNames]=await Promise.all([
+ const [writing,events,classic,memberNames,invitations]=await Promise.all([
   client.from("writing_entries").select("id,space_id,author_id,title,body,kind,visibility,version,created_at,updated_at").eq("space_id",spaceId).order("created_at",{ascending:false}).limit(100),
   client.from("space_activity").select("id,actor_id,action,created_at").eq("space_id",spaceId).order("created_at",{ascending:false}).limit(40),
   client.from("atlas_legacy_activity").select("id,actor_id,category,created_at").eq("space_id",spaceId).order("created_at",{ascending:false}).limit(40),
   client.from("space_member_names").select("user_id,display_name").eq("space_id",spaceId),
+  membership.role==="owner"?client.from("space_invitations").select("id,recipient_email,expires_at,accepted_at,revoked_at").eq("space_id",spaceId).order("created_at",{ascending:false}).limit(20):Promise.resolve({data:[],error:null}),
  ]);
- if(writing.error||events.error||classic.error||memberNames.error)throw Error("Our writing space is temporarily unavailable.");
+ if(writing.error||events.error||classic.error||memberNames.error||invitations.error)throw Error("Our writing space is temporarily unavailable.");
  const nameOf=new Map((memberNames.data||[]).map(n=>[n.user_id,n.display_name]));
  const combined:AtlasEvent[]=[
   ...(events.data||[]).map(x=>({
@@ -74,7 +76,13 @@ export default async function AtlasWriting(){
    </section>
    {membership.role==="owner"&&<details className="atlas-feature-panel atlas-writing-invitations">
     <summary>Invite someone into our private space</summary>
-    <div className="atlas-writing-invite"><InvitationForm spaceId={spaceId}/></div>
+    <div className="atlas-writing-invite"><InvitationForm spaceId={spaceId}/>
+    <div className="atlas-invitation-list">{(invitations.data||[]).map(invite=><div className="atlas-invitation-row" key={invite.id}>
+     <div><strong>{invite.recipient_email}</strong><small>{invite.accepted_at?"Accepted":invite.revoked_at?"Revoked":"Expires "+new Date(invite.expires_at).toLocaleDateString()}</small></div>
+     {!invite.accepted_at&&!invite.revoked_at&&<form action={revokeInvitation}>
+      <input type="hidden" name="id" value={invite.id}/><input type="hidden" name="spaceId" value={spaceId}/><button type="submit">Revoke</button>
+     </form>}
+    </div>)}</div></div>
    </details>}
    <div className="atlas-modern-footnote">Our shared pages are yours to write, revise and revisit.</div>
   </main>
