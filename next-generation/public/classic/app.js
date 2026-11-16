@@ -22,6 +22,25 @@ async function refresh(){
 }}
 $('#loginForm').addEventListener('submit',e=>{e.preventDefault();window.location.href='/sign-in'});
 const tabs=document.querySelectorAll('.tabs button');tabs.forEach(b=>b.onclick=()=>{tabs.forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===b.dataset.tab))});
+// Open the actual requested feature when arriving from the new app home screen.
+try {
+ const requestedTab=new URLSearchParams(window.top.location.search).get('tab');
+ const allowed=['wheel','library','journal','weather','capsules','memories','understanding','ideas'];
+ if(requestedTab&&allowed.includes(requestedTab)){
+  [...tabs].find(tab=>tab.dataset.tab===requestedTab)?.click();
+ }
+} catch { /* Standalone classic view still opens on the wheel. */ }
+
+// Presence is based on authenticated, expiring heartbeats, never on a decorative green dot.
+async function reportAtlasPresence(){
+ if(document.hidden)return;
+ try {await fetch('/api/presence',{method:'POST',credentials:'same-origin',cache:'no-store'})}
+ catch { /* Atlas content stays available even if online status fails. */ }
+}
+void reportAtlasPresence();
+window.setInterval(()=>{void reportAtlasPresence()},25000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)void reportAtlasPresence()});
+
 function updateCategories(){if(!state)return;for(const selector of ['#wheelCategory','#filter','#topicCategory']){const el=$(selector),old=el.value;const first=selector==='#topicCategory'?['Our inventions']:(selector==='#filter'?['all','favorites']:['all']);const cats=[...new Set(state.activities.map(a=>a.category))];const options=selector==='#topicCategory'?[...new Set([...first,...cats])]:[...first,...cats];el.innerHTML='';for(const value of options){const label=value==='all'?(selector==='#filter'?'All chapters':'Anything goes'):value==='favorites'?'Our favorites ♡':value;el.add(new Option(label,value))}el.value=options.includes(old)?old:options[0]}}
 function wheelChoices(){return state?.activities.filter(a=>$('#wheelCategory').value==='all'||a.category===$('#wheelCategory').value)||[]}
 function paintWheel(choices){
