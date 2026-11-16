@@ -230,6 +230,18 @@ $('#capsulePhoto').addEventListener('change',async()=>{
  }catch(err){toast(err.message||'Unable to prepare image');$('#capsulePhoto').value=''}
 });
 // Time capsules: server omits sealed contents from shared state until the opening date.
+function trustedCapsulePhoto(value){
+ if(typeof value!=='string')return '';
+ if(['data:image/jpeg;base64,','data:image/png;base64,','data:image/webp;base64,']
+   .some(prefix=>value.startsWith(prefix)))return value;
+ try{
+  const url=new URL(value);
+  return url.protocol==='https:' &&
+    url.hostname==='qlhrwneraccpqrthtavv.supabase.co' &&
+    url.pathname.startsWith('/storage/v1/object/sign/atlas-shared-media/')
+      ?value:'';
+ }catch{return ''}
+}
 function renderCapsules(){
  if(!state)return;
  $('#capsuleEntries').innerHTML=(state.capsules||[]).map(x=>{
@@ -238,7 +250,7 @@ function renderCapsules(){
   const remaining=Math.max(0,Date.parse(x.openAt)-Date.now());
   const days=Math.ceil(remaining/86400000);
   const countdown=x.sealed&&Number.isFinite(days)?(days>1?days+' days remaining':remaining>3600000?'Opens within a day':'Opening soon'):'';
-  return '<article class="capsule-card '+(x.sealed?'capsule-sealed':'capsule-open')+'"><div class="capsule-symbol">'+(x.sealed?'🔒':'💌')+'</div><p class="eyebrow">'+escapeHTML(x.mode==='surprise'?'Surprise capsule':'Together capsule')+'</p><h3>'+(x.sealed?'A memory waiting for its moment':escapeHTML(x.title))+'</h3><p class="muted">'+meta+'</p><p>Opens '+escapeHTML(date)+'</p>'+(x.sealed?'<p class="muted">Sealed until its opening date</p>':'<p class="capsule-message">'+escapeHTML(x.message)+'</p>'+(x.photo&&['data:image/jpeg;base64,','data:image/png;base64,','data:image/webp;base64,'].some(prefix=>x.photo.startsWith(prefix))?'<img class="capsule-photo" alt="Time capsule photograph" src="'+x.photo+'">':''))+'</article>';
+  return '<article class="capsule-card '+(x.sealed?'capsule-sealed':'capsule-open')+'"><div class="capsule-symbol">'+(x.sealed?'🔒':'💌')+'</div><p class="eyebrow">'+escapeHTML(x.mode==='surprise'?'Surprise capsule':'Together capsule')+'</p><h3>'+(x.sealed?'A memory waiting for its moment':escapeHTML(x.title))+'</h3><p class="muted">'+meta+'</p><p>Opens '+escapeHTML(date)+'</p>'+(x.sealed?'<p class="muted">Sealed until its opening date</p>':'<p class="capsule-message">'+escapeHTML(x.message)+'</p>'+(trustedCapsulePhoto(x.photo)?'<img class="capsule-photo" alt="Opened time capsule photograph" loading="lazy" src="'+escapeHTML(trustedCapsulePhoto(x.photo))+'">':''))+'</article>';
  }).join('')||'<p class="muted">No capsules yet. Your first letter to the future can begin here.</p>';
 }
 $('#capsuleForm').addEventListener('submit',async e=>{
@@ -370,10 +382,10 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden){void refr
 function renderMemoryGallery(){
  if(!state)return;
  const filter=$('#memoryFilter').value;
- const photos=(state.capsules||[]).filter(x=>!x.sealed&&x.photo&&['data:image/jpeg;base64,','data:image/png;base64,','data:image/webp;base64,'].some(p=>x.photo.startsWith(p))).map(x=>({kind:'photo',at:x.openAt,who:x.who,title:x.title,text:x.message,photo:x.photo}));
+ const photos=(state.capsules||[]).filter(x=>!x.sealed&&trustedCapsulePhoto(x.photo)).map(x=>({kind:'photo',at:x.openAt,who:x.who,title:x.title,text:x.message,photo:x.photo}));
  const journals=(state.journal||[]).filter(x=>x.type==='Memory').map(x=>({kind:'journal',at:x.at,who:x.who,title:x.title||'A memory',text:x.text}));
  const entries=[...(filter==='journal'?[]:photos),...(filter==='photos'?[]:journals)].sort((a,b)=>Date.parse(b.at)-Date.parse(a.at));
- $('#memoryGallery').innerHTML=entries.map(x=>'<article class="memory-card"><p class="eyebrow">'+(x.kind==='photo'?'📷 Opened capsule':'✍️ Journal memory')+'</p>'+(x.photo?'<img class="memory-photo" loading="lazy" alt="Opened time capsule photo" src="'+x.photo+'">':'')+'<h3>'+escapeHTML(x.title)+'</h3><p class="muted">'+escapeHTML(x.who)+' · '+escapeHTML(new Date(x.at).toLocaleDateString())+'</p><p class="memory-text">'+escapeHTML(x.text)+'</p></article>').join('')||'<p class="muted">No memories in this view yet. Opened photo capsules and journal memories will appear here.</p>';
+ $('#memoryGallery').innerHTML=entries.map(x=>'<article class="memory-card"><p class="eyebrow">'+(x.kind==='photo'?'📷 Opened capsule':'✍️ Journal memory')+'</p>'+(x.photo?'<img class="memory-photo" loading="lazy" alt="Opened time capsule photo" src="'+escapeHTML(trustedCapsulePhoto(x.photo))+'">':'')+'<h3>'+escapeHTML(x.title)+'</h3><p class="muted">'+escapeHTML(x.who)+' · '+escapeHTML(new Date(x.at).toLocaleDateString())+'</p><p class="memory-text">'+escapeHTML(x.text)+'</p></article>').join('')||'<p class="muted">No memories in this view yet. Opened photo capsules and journal memories will appear here.</p>';
 }
 $('#memoryFilter').addEventListener('change',renderMemoryGallery);
 
