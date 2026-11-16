@@ -4,6 +4,13 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
+        source: "/classic/:path*",
+        headers: [
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          { key: "Cache-Control", value: "public, max-age=300, stale-while-revalidate=600" },
+        ],
+      },
+      {
         source: "/(.*)",
         headers: [
           { key: "X-Content-Type-Options", value: "nosniff" },
