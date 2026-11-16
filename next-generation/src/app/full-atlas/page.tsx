@@ -7,7 +7,7 @@ export default function FullAtlas() {
   return (
     <div className="atlas-classic-shell">
       <nav className="atlas-classic-bar" aria-label="Our Little Atlas navigation">
-        <span>✧ Our Little Atlas</span>
+        <Link href="/home">← Our Little Atlas home</Link>
         <Link href="/space">Shared writing & notifications →</Link>
       </nav>
       <iframe
