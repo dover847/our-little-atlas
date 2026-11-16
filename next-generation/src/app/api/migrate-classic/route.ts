@@ -57,8 +57,13 @@ export async function POST(req:NextRequest) {
   }
   const arrays=["spins","favorites","ideas","journal","customActivities",
     "capsules","mirrors","clarity","assumptions"];
-  if(!archive||typeof archive!=="object"||Array.isArray(archive) ||
-    !Number.isSafeInteger(archive.revision)||Number(archive.revision)<0 ||
+  if(!archive||typeof archive!=="object"||Array.isArray(archive))
+    return response({error:"Original archive failed structural verification"},422);
+  // The original disk was created before several newer features existed.
+  // Missing fields are truly empty; never discard or coerce existing entries.
+  for(const field of arrays) if(!(field in archive))archive[field]=[];
+  for(const field of ["notes","weather"])if(!(field in archive))archive[field]={};
+  if(!Number.isSafeInteger(archive.revision)||Number(archive.revision)<0 ||
     arrays.some(k=>!Array.isArray(archive[k])) ||
     !archive.notes||typeof archive.notes!=="object"||Array.isArray(archive.notes)||
     !archive.weather||typeof archive.weather!=="object"||Array.isArray(archive.weather))
