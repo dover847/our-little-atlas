@@ -73,9 +73,9 @@ export function ProfilePair(){
        </span>
        <span className="wheel-upload-badge">{uploading?<RefreshCw size={11}/>:<Camera size={11}/>}</span>
       </button>:
-      <span className={"wheel-person-photo"+(index===1?" mia":"")}>
+      <div className={"wheel-person-photo"+(index===1?" mia":"")}>
        {profile.photoUrl?<img src={profile.photoUrl} alt={profile.name+" portrait"}/>:profile.name[0]}
-      </span>}
+      </div>}
      <span className="wheel-person-name">{profile.name}</span>
     </div>).reduce<React.ReactNode[]>((acc,item,index)=>{
      if(index)acc.push(<div className="wheel-bond" key="bond" aria-hidden="true">♡</div>);
