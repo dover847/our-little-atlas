@@ -26,6 +26,11 @@ export default async function Space() {
           <br />
           <em>something lovely.</em>
         </h1>
+        {!error && Boolean(spaces?.length) && (
+          <p style={{ margin: "18px 0 25px" }}>
+            <Link className="button-dark" href="/full-atlas">✧ Open the complete original Atlas</Link>
+          </p>
+        )}
         {error ? (
           <p role="alert">
             Your spaces couldn’t be loaded. Please try again later.
