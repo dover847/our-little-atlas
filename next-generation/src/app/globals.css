@@ -2162,3 +2162,116 @@ select option {
 .pending-inbox .button-dark {
   margin-top: 18px;
 }
+
+
+/* The private activity feed and optional Home Screen notifications */
+.atlas-activity-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(250px, .8fr);
+  gap: 28px;
+  margin: 26px 0 36px;
+  scroll-margin-top: 20px;
+}
+.atlas-activity-pane, .atlas-notifications {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 25px;
+}
+.atlas-activity-top {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 15px;
+}
+.atlas-activity-top h2 {
+  margin-top: 9px;
+  margin-bottom: 9px;
+  font-size: clamp(22px, 3vw, 30px);
+}
+.atlas-new-count {
+  background: #dce6d4;
+  color: #294630;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 25px;
+  padding: 7px 10px;
+  white-space: nowrap;
+}
+.atlas-activity-actions {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin-top: 14px;
+}
+.atlas-activity-actions .text-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.atlas-activity-items {
+  padding: 0;
+  margin: 19px 0 0;
+  list-style: none;
+  max-height: 265px;
+  overflow: auto;
+}
+.atlas-activity-items li {
+  display: flex;
+  gap: 11px;
+  align-items: start;
+  border-top: 1px solid var(--line);
+  padding: 13px 0;
+  font-size: 12px;
+}
+.atlas-activity-items p { line-height: 1.5; }
+.atlas-activity-items time {
+  display: block;
+  color: var(--muted);
+  font-size: 10px;
+  margin-top: 4px;
+}
+.atlas-activity-dot {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 7px;
+  border-radius: 50%;
+  margin-top: 5px;
+  background: #78936d;
+}
+.atlas-no-activity {
+  line-height: 1.7;
+  color: var(--muted);
+  margin: 20px 0 0;
+  font-size: 12px;
+}
+.atlas-feature-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+}
+.atlas-feature-heading h3 { font-size: 25px; }
+.atlas-feature-heading p {
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--muted);
+  margin: 10px 0 0;
+}
+.atlas-notifications .button-dark { margin: 12px 0; max-width: 100%; }
+.atlas-notifications .field-help { margin: 12px 0 0; line-height: 1.6; }
+.atlas-device-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: var(--sage);
+  border-radius: 6px;
+  padding: 14px 12px;
+  font-size: 12px;
+  line-height: 1.7;
+  margin: 16px 0 0;
+}
+.atlas-device-hint svg { flex: 0 0 17px; margin-top: 2px; }
+@media (max-width: 760px) {
+  .atlas-activity-card { grid-template-columns: 1fr; gap: 15px; }
+  .atlas-activity-pane, .atlas-notifications { padding: 20px; }
+}
