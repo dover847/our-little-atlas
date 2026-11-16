@@ -34,13 +34,13 @@ function sameOrigin(request: NextRequest) {
   return !origin || origin === request.nextUrl.origin;
 }
 
-async function snapshot(ctx: Context) {
+async function snapshot(ctx: Context, withStorage = false) {
   const [appearance, names, usage] = await Promise.all([
     ctx.client.from("atlas_atmospheres")
       .select("shared_theme,accent_color,background_path,background_bytes,updated_at,updated_by")
       .eq("space_id",ctx.spaceId).single(),
     ctx.client.from("space_member_names").select("user_id,display_name").eq("space_id",ctx.spaceId),
-    ctx.client.rpc("atlas_storage_usage",{target_space:ctx.spaceId}),
+    withStorage ? ctx.client.rpc("atlas_storage_usage",{target_space:ctx.spaceId}) : Promise.resolve({data:null,error:null}),
   ]);
   if (appearance.error || !appearance.data) return respond({error:"Shared appearance temporarily unavailable"},503);
   const row=appearance.data;
@@ -60,7 +60,7 @@ async function snapshot(ctx: Context) {
     backgroundBytes:row.background_bytes,
     updatedAt:row.updated_at,
     updatedBy:displayName,
-    storage:usage.error ? null : {
+    storage:!withStorage || usage.error ? null : {
       mediaFiles:Number(metrics?.file_count || 0),
       mediaBytes:Number(metrics?.file_bytes || 0),
       archiveBytes:Number(metrics?.archive_bytes || 0),
@@ -69,9 +69,10 @@ async function snapshot(ctx: Context) {
   });
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   const ctx=await member();
-  return ctx ? snapshot(ctx) : respond({error:"Sign in to Atlas first"},401);
+  return ctx ? snapshot(ctx,request.nextUrl.searchParams.has("storage")) :
+    respond({error:"Sign in to Atlas first"},401);
 }
 
 export async function PATCH(request: NextRequest) {
@@ -101,7 +102,7 @@ export async function PATCH(request: NextRequest) {
   if(error)return respond({error:"Could not save shared atmosphere"},503);
   if(removePhoto && existing?.background_path)
     await db.storage.from(bucket).remove([existing.background_path]);
-  return snapshot(ctx);
+  return snapshot(ctx,true);
 }
 
 function validImage(bytes: Buffer, type: string) {
