@@ -20,7 +20,7 @@ function createPrivateArchiveReader() {
 }
 
 const actionNames = new Set([
-  "spin","note","favorite","topic","idea","journal","assumption","clarity",
+  "spin","note","favorite","topic","idea","journal","journal-comment","assumption","clarity",
   "clarity-reply","mirror","mirror-answer","capsule","weather",
 ]);
 
