@@ -9,7 +9,7 @@ async function refresh(){try{const latest=await api('state');const previous=stat
     if($('#saveMia'))$('#saveMia').disabled=who()!=='Mia';
     if($('#noteDanny'))$('#noteDanny').readOnly=who()!=='Danny';
     if($('#noteMia'))$('#noteMia').readOnly=who()!=='Mia';
-    renderCapsules();renderMemoryGallery();if(previous!==state.revision){updateCategories();renderWheel();renderActivities();renderEntries();renderIdeas();renderWeather();renderUnderstanding();if(activeId!==null&&!editing)fillNotes(activeId)}}catch(e){if(e.message.includes('sign in')){window.top.location.href='/sign-in'}}}
+    renderCapsules();renderMemoryGallery();if(previous!==state.revision){updateCategories();renderWheel();renderActivities();renderEntries();renderIdeas();renderWeather();renderUnderstanding();if(activeId!==null&&!editing)fillNotes(activeId)}}catch(e){if(/sign in|sign-in/i.test(e.message)){window.top.location.href='/sign-in'}}}
 $('#loginForm').addEventListener('submit',e=>{e.preventDefault();window.location.href='/sign-in'});
 const tabs=document.querySelectorAll('.tabs button');tabs.forEach(b=>b.onclick=()=>{tabs.forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===b.dataset.tab))});
 function updateCategories(){if(!state)return;for(const selector of ['#wheelCategory','#filter','#topicCategory']){const el=$(selector),old=el.value;const first=selector==='#topicCategory'?['Our inventions']:(selector==='#filter'?['all','favorites']:['all']);const cats=[...new Set(state.activities.map(a=>a.category))];const options=selector==='#topicCategory'?[...new Set([...first,...cats])]:[...first,...cats];el.innerHTML='';for(const value of options){const label=value==='all'?(selector==='#filter'?'All chapters':'Anything goes'):value==='favorites'?'Our favorites ♡':value;el.add(new Option(label,value))}el.value=options.includes(old)?old:options[0]}}
@@ -190,12 +190,121 @@ $('#capsuleForm').addEventListener('submit',async e=>{
  }catch(err){toast(err.message)}
 });
 
-// Personal themes are browser-local until per-user accounts exist.
-const atlasThemes=['original','rose','forest','ocean','violet'];
-let savedTheme='original';try{savedTheme=localStorage.getItem('atlas-theme-v1')||'original'}catch{}
-$('#atlasTheme').value=atlasThemes.includes(savedTheme)?savedTheme:'original';
-document.body.dataset.atlasTheme=$('#atlasTheme').value;
-$('#atlasTheme').addEventListener('change',()=>{const theme=$('#atlasTheme').value;if(!atlasThemes.includes(theme))return;document.body.dataset.atlasTheme=theme;try{localStorage.setItem('atlas-theme-v1',theme)}catch{}});
+// A single shared background lives in the private Atlas database.
+const atmosphereThemes=['original','rose','forest','ocean','violet','sunrise','twilight'];
+let currentAtmosphere=null,appliedSharedPhoto=null,appearanceRequest=false;
+let sharedSaveBusy=false;
+function atmosphereMessage(message){const label=$('#atlasBackgroundStatus');if(label)label.textContent=message;}
+function readableSize(bytes){return bytes>=1048576?(bytes/1048576).toFixed(1)+' MB':(bytes/1024).toFixed(1)+' KB';}
+function applyAtmosphere(value){
+ if(!value)return;
+ currentAtmosphere=value;
+ document.body.dataset.atlasTheme=atmosphereThemes.includes(value.sharedTheme)?value.sharedTheme:'original';
+ if(/^#[a-fA-F0-9]{6}$/.test(value.accentColor||''))document.body.style.setProperty('--gold',value.accentColor);
+ if(document.activeElement!==$('#atlasSharedTheme'))$('#atlasSharedTheme').value=value.sharedTheme;
+ if(document.activeElement!==$('#atlasSharedAccent'))$('#atlasSharedAccent').value=value.accentColor;
+ if(value.backgroundPath!==appliedSharedPhoto){
+   appliedSharedPhoto=value.backgroundPath||null;
+   if(value.backgroundPath&&value.backgroundUrl){
+     const image=new Image();
+     image.onload=()=>{
+       if(currentAtmosphere?.backgroundPath!==value.backgroundPath)return;
+       const url=JSON.stringify(value.backgroundUrl);
+       document.body.style.backgroundImage='linear-gradient(#08131ab8,#08131ab8),url('+url+')';
+       document.body.style.backgroundSize='cover';
+       document.body.style.backgroundPosition='center';
+       document.body.style.backgroundAttachment='fixed';
+     };
+     image.src=value.backgroundUrl;
+   }else{
+     document.body.style.removeProperty('background-image');
+     document.body.style.removeProperty('background-size');
+     document.body.style.removeProperty('background-position');
+     document.body.style.removeProperty('background-attachment');
+   }
+ }
+ const actor=value.updatedBy ? ' · last changed by '+value.updatedBy : '';
+ const stamp=value.updatedAt?new Date(value.updatedAt).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}):'';
+ atmosphereMessage('Synced for both of us'+actor+(stamp?' at '+stamp:''));
+ if(value.storage){
+   const s=value.storage;
+   $('#atlasUsage').textContent='Shared photo storage: '+s.mediaFiles+' file(s), '+readableSize(s.mediaBytes)+
+     ' · Original memories: '+readableSize(s.archiveBytes)+' · Modern writing pages: '+s.writingPages;
+ }
+}
+async function refreshAtmosphere(includeStorage=false){
+ if(appearanceRequest||sharedSaveBusy||document.hidden)return;
+ appearanceRequest=true;
+ try{
+   const response=await fetch('/api/atmosphere'+(includeStorage?'?storage=1':''),{
+     credentials:'same-origin',cache:'no-store',
+   });
+   if(response.status===401){window.top.location.href='/sign-in';return}
+   if(!response.ok)throw Error('Shared backgrounds are momentarily unavailable');
+   const data=await response.json();
+   if(data.sharedTheme)applyAtmosphere(data);
+ }catch(e){atmosphereMessage(e.message)}
+ finally{appearanceRequest=false}
+}
+async function updateSharedAtmosphere(options){
+ if(sharedSaveBusy)return;
+ sharedSaveBusy=true;
+ $('#atlasApplyShared').disabled=true;
+ atmosphereMessage('Saving for both of us…');
+ try{
+   let response;
+   if(options.photo){
+     const photo=options.photo;
+     if(!['image/jpeg','image/png','image/webp'].includes(photo.type)||photo.size>12000000)
+       throw Error('Choose a JPG, PNG or WebP photo under 12 MB');
+     const bitmap=await createImageBitmap(photo);
+     const canvas=document.createElement('canvas');
+     const scale=Math.min(1,1680/Math.max(bitmap.width,bitmap.height));
+     canvas.width=Math.max(1,Math.round(bitmap.width*scale));
+     canvas.height=Math.max(1,Math.round(bitmap.height*scale));
+     const context=canvas.getContext('2d');
+     if(!context)throw Error('Image resizing is unavailable');
+     context.drawImage(bitmap,0,0,canvas.width,canvas.height);
+     bitmap.close();
+     let upload=null;
+     for(const quality of [.82,.73,.61,.47,.35]){
+       upload=await new Promise(resolve=>canvas.toBlob(resolve,'image/webp',quality));
+       if(upload&&upload.size<=1100000)break;
+     }
+     if(!upload||upload.size>1200000)throw Error('This image is too large. Choose a smaller photo.');
+     const form=new FormData();form.append('photo',upload,'atlas-shared-background.webp');
+     response=await fetch('/api/atmosphere',{method:'POST',body:form,credentials:'same-origin'});
+   }else{
+     response=await fetch('/api/atmosphere',{method:'PATCH',
+       credentials:'same-origin',headers:{'Content-Type':'application/json'},
+       body:JSON.stringify({
+         theme:$('#atlasSharedTheme').value,
+         accent:$('#atlasSharedAccent').value,
+         removePhoto:options.removePhoto===true,
+       }),
+     });
+   }
+   const result=await response.json();
+   if(!response.ok)throw Error(result.error||'Could not save our atmosphere');
+   // Force a photo refresh after upload or removal, even when a prior background existed.
+   appliedSharedPhoto=undefined;
+   applyAtmosphere(result);
+   toast('Our shared atmosphere is updated ✦');
+ }catch(e){atmosphereMessage(e.message);toast(e.message)}
+ finally{sharedSaveBusy=false;$('#atlasApplyShared').disabled=false}
+}
+$('#atlasApplyShared').onclick=()=>void updateSharedAtmosphere({});
+$('#atlasRemoveSharedPhoto').onclick=()=>void updateSharedAtmosphere({removePhoto:true});
+$('#atlasSharedPhoto').addEventListener('change',async()=>{
+ const f=$('#atlasSharedPhoto').files?.[0];
+ if(f)await updateSharedAtmosphere({photo:f});
+ $('#atlasSharedPhoto').value='';
+});
+$('#atlasStorageRefresh').onclick=()=>void refreshAtmosphere(true);
+void refreshAtmosphere(true);
+setInterval(()=>{if(!document.hidden)void refreshAtmosphere()},9000);
+window.addEventListener('focus',()=>{void refreshAtmosphere(true);void refresh()});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){void refreshAtmosphere();void refresh()}});
 
 // Gallery derives exclusively from already-opened capsules and existing journal entries.
 function renderMemoryGallery(){
@@ -207,30 +316,6 @@ function renderMemoryGallery(){
  $('#memoryGallery').innerHTML=entries.map(x=>'<article class="memory-card"><p class="eyebrow">'+(x.kind==='photo'?'📷 Opened capsule':'✍️ Journal memory')+'</p>'+(x.photo?'<img class="memory-photo" loading="lazy" alt="Opened time capsule photo" src="'+x.photo+'">':'')+'<h3>'+escapeHTML(x.title)+'</h3><p class="muted">'+escapeHTML(x.who)+' · '+escapeHTML(new Date(x.at).toLocaleDateString())+'</p><p class="memory-text">'+escapeHTML(x.text)+'</p></article>').join('')||'<p class="muted">No memories in this view yet. Opened photo capsules and journal memories will appear here.</p>';
 }
 $('#memoryFilter').addEventListener('change',renderMemoryGallery);
-
-// Custom photo backgrounds never leave this browser. Storage is best-effort.
-const backgroundPhotoKey='atlas-background-photo-v1';
-function applyBackgroundPhoto(value){
- if(typeof value==='string'&&value.startsWith('data:image/jpeg;base64,')&&value.length<650000){
-  document.body.style.backgroundImage='linear-gradient(#08131ab8,#08131ab8),url("'+value+'")';
-  document.body.style.backgroundSize='cover';document.body.style.backgroundAttachment='fixed';document.body.style.backgroundPosition='center';
- }else{document.body.style.removeProperty('background-image');document.body.style.removeProperty('background-size');document.body.style.removeProperty('background-attachment');document.body.style.removeProperty('background-position')}
-}
-try{applyBackgroundPhoto(localStorage.getItem(backgroundPhotoKey))}catch{}
-$('#atlasBackgroundPhoto').addEventListener('change',async()=>{
- const file=$('#atlasBackgroundPhoto').files[0];if(!file)return;
- if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>12000000){toast('Choose a JPG, PNG or WebP under 12 MB');return}
- try{
-  const bitmap=await createImageBitmap(file),canvas=document.createElement('canvas');
-  const scale=Math.min(1,1100/Math.max(bitmap.width,bitmap.height));canvas.width=Math.max(1,Math.round(bitmap.width*scale));canvas.height=Math.max(1,Math.round(bitmap.height*scale));
-  canvas.getContext('2d').drawImage(bitmap,0,0,canvas.width,canvas.height);bitmap.close();
-  let photo='';for(const quality of [.7,.5,.3]){const candidate=canvas.toDataURL('image/jpeg',quality);if(candidate.length<650000){photo=candidate;break}}
-  if(!photo)throw Error('This photo is too large after resizing');
-  localStorage.setItem(backgroundPhotoKey,photo);applyBackgroundPhoto(photo);toast('Your background is ready ✦');
- }catch(err){toast('Could not save this background: '+err.message)}
- $('#atlasBackgroundPhoto').value='';
-});
-$('#atlasBackgroundClear').addEventListener('click',()=>{try{localStorage.removeItem(backgroundPhotoKey)}catch{}applyBackgroundPhoto('');$('#atlasBackgroundPhoto').value='';toast('Personal photo background removed')});
 
 // Export only the server-authorized view. Never serialize sealed capsule content.
 $('#exportMemories').addEventListener('click',()=>{
@@ -246,4 +331,4 @@ $('#login').hidden=true;
 $('#app').hidden=false;
 $('#who').disabled=true;
 void refresh();
-setInterval(()=>{if(!document.hidden)void refresh()},4000);
+setInterval(()=>{if(!document.hidden)void refresh()},12000);
