@@ -33,7 +33,7 @@ export async function signIn(_previous: { error: string }, form: FormData) {
       error: "Sign-in is temporarily unavailable. Please try again later.",
     };
   }
-  redirect("/space");
+  redirect("/home");
 }
 
 export async function signOut() {
