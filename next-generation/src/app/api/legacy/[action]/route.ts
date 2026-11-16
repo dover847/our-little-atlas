@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
 import { randomUUID } from "node:crypto";
 import { createClient } from "@/lib/supabase/server";
 import { createClient as createAdminClient } from "@supabase/supabase-js";
@@ -138,9 +138,13 @@ export async function POST(
       continue;
     }
     // A push failure must never undo a saved entry.
-    try {
-      await notifyCompanions(auth.spaceId,auth.user.id,"updated",change.category);
-    } catch {console.warn("A classic Atlas change was saved without push delivery");}
+    after(async () => {
+      try {
+        await notifyCompanions(auth.spaceId,auth.user.id,"updated",change.category);
+      } catch {
+        console.warn("A classic Atlas change was saved without push delivery");
+      }
+    });
     return reply({...change.result,revision:change.state.revision});
   }
   return reply({error:"The Atlas changed while you were editing. Please try again."},409);
