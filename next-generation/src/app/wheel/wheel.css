@@ -47,7 +47,7 @@
 .wheel-picker select{max-width:185px;min-width:125px;border:1px solid #fff5e6b0;border-radius:11px;padding:9px 27px 9px 11px;background:#fff4eae8;color:#653d56;font-size:11px;box-shadow:0 3px 8px #463b5330}
 .wheel-stage{position:relative;width:min(92vw,460px);height:min(92vw,460px);max-height:460px;margin:0 auto 2px;filter:drop-shadow(0 0 20px #ffdbad7b)}
 .wheel-pointer{position:absolute;left:50%;top:-21px;z-index:4;transform:translateX(-50%);font-size:28px;color:#fff5dc;text-shadow:0 2px 8px #55354b}
-.wheel-plate{position:absolute;inset:0;border-radius:50%;border:7px solid #ffedcf;background:conic-gradient(from -22.5deg,#ba708f 0 45deg,#dfa673 45deg 90deg,#6ba595 90deg 135deg,#7799bc 135deg 180deg,#8e83ad 180deg 225deg,#6ca08b 225deg 270deg,#c5a16e 270deg 315deg,#a86f8e 315deg 360deg);box-shadow:inset 0 0 0 3px #f2ba83,inset 0 0 27px #fff7ed76,0 0 0 3px #d3917b,0 0 23px #f7b17baa;transition:transform 3.05s cubic-bezier(.12,.82,.11,1);overflow:hidden}
+.wheel-plate{position:absolute;inset:0;border-radius:50%;border:7px solid #ffedcf;background:conic-gradient(from -22.5deg,#ba708f 0 45deg,#dfa673 45deg 90deg,#6ba595 90deg 135deg,#7799bc 135deg 180deg,#8e83ad 180deg 225deg,#6ca08b 225deg 270deg,#c5a16e 270deg 315deg,#a86f8e 315deg 360deg);box-shadow:inset 0 0 0 3px #f2ba83,inset 0 0 27px #fff7ed76,0 0 0 3px #d3917b,0 0 23px #f7b17baa;transition:transform 10.3s cubic-bezier(.10,.69,.08,1);overflow:hidden}
 .wheel-plate::before{content:"";position:absolute;inset:0;border-radius:50%;background:repeating-conic-gradient(from -22.5deg,transparent 0 44.7deg,#fff3dbb0 44.7deg 45deg);pointer-events:none}
 .wheel-plate::after{content:"";position:absolute;inset:4px;border:1.5px solid #ffe1b7b0;border-radius:50%;pointer-events:none}
 .wheel-chapters{position:relative;width:100%;height:100%}
@@ -88,3 +88,14 @@
 @media (min-width:600px){.wheel-main{padding-left:44px;padding-right:44px}.wheel-shortcuts{gap:17px}.wheel-stage{width:440px;height:440px}}
 @media(max-width:390px){.wheel-main{padding:7px 11px 0}.wheel-topbar{padding:18px 9px 4px}.wheel-top-tools{gap:4px}.wheel-top-button{width:35px;height:35px}.wheel-brand strong{font-size:23px}.wheel-brand small{font-size:6px}.wheel-people{gap:17px}.wheel-person-photo{width:65px;height:65px}.wheel-stage{width:min(91vw,350px);height:min(91vw,350px)}.wheel-chapter{width:60px}.wheel-chapter span{font-size:10px}.wheel-chapter svg{width:19px;height:19px}.wheel-shortcuts{gap:7px}.wheel-shortcuts a{min-height:90px;font-size:10px}.wheel-section-title h2{font-size:20px}}
 @media(prefers-reduced-motion:reduce){.wheel-plate{transition:none}.wheel-spin-icon{animation:none}}
+
+/* Personal, member-owned profile photographs; no placeholder photos of strangers. */
+.wheel-person-upload{position:relative;display:block;background:none;padding:0;border:0;cursor:pointer;border-radius:50%}
+.wheel-person-upload:focus-visible{outline:3px solid #ffe1b5;outline-offset:3px}
+.wheel-person-photo{overflow:hidden}
+.wheel-person-photo img{display:block;width:100%;height:100%;object-fit:cover;object-position:center}
+.wheel-upload-badge{position:absolute;bottom:2px;right:-4px;display:grid;place-items:center;background:#fff1df;color:#935b71;width:23px;height:23px;border-radius:50%;border:2px solid #fff;box-shadow:0 2px 6px #3a273840}
+.wheel-person .wheel-person-name{position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);background:#352538c7;border:1px solid #fff3d779;border-radius:50px;padding:3px 11px;font-size:11px;white-space:nowrap}
+.wheel-photo-help{text-align:center;min-height:20px;font-size:10px;margin:5px 6px 0;color:#fff4e8;text-shadow:0 1px 5px #362638}
+.wheel-chapter{transition:transform 10.3s cubic-bezier(.10,.69,.08,1)}
+@media(prefers-reduced-motion:reduce){.wheel-plate,.wheel-chapter{transition:none}}
