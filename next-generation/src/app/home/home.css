@@ -76,3 +76,17 @@
 @media (min-width:691px){.ala-shell{border-left:1px solid #efe9e6;border-right:1px solid #efe9e6}.ala-map{height:270px}}
 @media (max-width:395px){.ala-brand>span{font-size:23px}.ala-header{padding:13px 14px 6px}.ala-journey{margin:5px 12px 0}.ala-map{height:215px}.ala-city-left{left:30%;top:62px}.ala-city-right{left:75%;top:62px}.ala-map-caption h1{font-size:23px}.ala-feature-grid{gap:7px}.ala-features{padding:7px 12px 0}.ala-tile{font-size:10px;min-height:105px;border-radius:15px}.ala-presence-card{margin:13px 12px 10px}}
 @media (prefers-reduced-motion:reduce){.ala-tile{transition:none}}
+
+/* A lightweight launch state appears only during genuine server navigation. */
+.ala-launch{min-height:100dvh;max-width:690px;margin:0 auto;display:flex;align-items:center;justify-content:center;text-align:center;position:relative;overflow:hidden;color:#fff4ea;background:radial-gradient(circle at 50% 15%,#ad91b8 0%,transparent 50%),linear-gradient(155deg,#7d88aa 0%,#a5a3bc 42%,#e8b6b1 75%,#f8d4ae 100%);font-family:Georgia,serif}
+.ala-launch-flower{position:absolute;top:5%;right:-2%;font-size:150px;color:#f4c5d2;opacity:.45;transform:rotate(-20deg);pointer-events:none}
+.ala-launch-content{position:relative;z-index:1;width:100%;max-width:390px;padding:32px 24px}
+.ala-launch-brand{font:italic 50px/1.02 Georgia,serif;letter-spacing:-1.4px;text-shadow:0 3px 18px #604a7188}
+.ala-launch-brand span{font-size:33px;color:#ffe3b0}
+.ala-launch-content>p{font:normal 10px/1.9 Arial,Helvetica,sans-serif;letter-spacing:2.5px;margin:27px 0 38px}
+.ala-launch-orbit{width:110px;height:110px;border:8px solid #fff4d787;border-left-color:#f4d6a0;border-top-color:#f7a5ac;border-radius:50%;margin:0 auto 30px;display:grid;place-items:center;animation:ala-gentle-spin 2.7s linear infinite}
+.ala-launch-orbit span{font-size:37px;color:#fff8e0;animation:ala-gentle-spin 2.7s linear infinite reverse}
+.ala-launch-label{font:italic 23px Georgia,serif}
+.ala-launch-small{font:12px Arial,Helvetica,sans-serif;margin-top:12px;color:#fffcf2}
+@keyframes ala-gentle-spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.ala-launch-orbit,.ala-launch-orbit span{animation:none}}
