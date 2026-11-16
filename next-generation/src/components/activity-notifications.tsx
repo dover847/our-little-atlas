@@ -8,6 +8,7 @@ export type AtlasEvent = {
   actorId: string;
   actorName: string;
   action: "created" | "updated" | "shared";
+  category?: string;
   createdAt: string;
 };
 
@@ -200,7 +201,7 @@ export function ActivityAndNotifications({
           <div>
             <p className="eyebrow">LITTLE SIGNS OF LIFE</p>
             <h2 id="activity-heading">What’s new together?</h2>
-            <p className="field-help">Shared page changes appear here automatically.</p>
+            <p className="field-help">All shared changes, including the full original Atlas, appear here automatically.</p>
           </div>
           {newCount > 0 && <span className="atlas-new-count">{newCount} new</span>}
         </div>
@@ -216,7 +217,7 @@ export function ActivityAndNotifications({
               <li key={event.id}>
                 <span aria-hidden="true" className="atlas-activity-dot" />
                 <div>
-                  <p><strong>{event.actorId === userId ? "You" : event.actorName}</strong> {verb(event.action)}</p>
+                  <p><strong>{event.actorId === userId ? "You" : event.actorName}</strong> {event.category ? `updated ${event.category}` : verb(event.action)}</p>
                   <time dateTime={event.createdAt}>
                     {new Date(event.createdAt).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}
                   </time>
