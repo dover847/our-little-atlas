@@ -32,30 +32,6 @@ http.createServer(async(req,res)=>{
  try{
  const u=new URL(req.url,'http://localhost');
  if(req.method==='POST'&&u.pathname==='/api/login'){const b=await body(req);if(!good(b.password,PASSWORD))return send(res,401,{error:'Incorrect password'});res.setHeader('Set-Cookie',`atlas=${hash('atlas-access')}; HttpOnly; SameSite=Lax; Path=/; Max-Age=2592000${process.env.NODE_ENV==='production'?'; Secure':''}`);return send(res,200,{ok:true})}
- // Temporary read-only migration export, gated by a private server-side key.
- // The authoritative file remains on the persistent disk; an immutable copy
- // is saved before the response. The key is never sent to a browser.
- if(req.method==='GET'&&u.pathname==='/api/_owner_atlas_backup'){
-  const k=process.env.ATLAS_COPY_EXPORT_KEY;
-  const presented=req.headers['x-atlas-copy-key'];
-  if(!k||k.length<40||typeof presented!=='string'||!good(presented,k)){
-    return send(res,404,{error:'Not found'});
-  }
-  if(!fs.existsSync(DATA))return send(res,404,{error:'No persistent archive'});
-  const backup=DATA+'.pre-iphone-copy-20261116';
-  if(!fs.existsSync(backup)){
-    try{fs.copyFileSync(DATA,backup,fs.constants.COPYFILE_EXCL)}
-    catch(e){if(e.code!=='EEXIST')throw e}
-  }
-  const bytes=fs.readFileSync(backup);
-  if(bytes.length>16000000)return send(res,413,{error:'Archive too large'});
-  const parsed=JSON.parse(bytes.toString('utf8'));
-  if(!parsed||typeof parsed!=='object'||Array.isArray(parsed))
-    return send(res,500,{error:'Archive invalid'});
-  res.writeHead(200,{'Content-Type':'application/json; charset=utf-8',
-    'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});
-  return res.end(bytes);
- }
  if(u.pathname.startsWith('/api/')){
  if(!authorized(req))return send(res,401,{error:'Please unlock the atlas'});
  if(req.method==='GET'&&u.pathname==='/api/state')return send(res,200,{...state,capsules:visibleCapsules(),activities:allActivities()});
