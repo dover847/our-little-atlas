@@ -90,3 +90,16 @@
 .ala-launch-small{font:12px Arial,Helvetica,sans-serif;margin-top:12px;color:#fffcf2}
 @keyframes ala-gentle-spin{to{transform:rotate(360deg)}}
 @media(prefers-reduced-motion:reduce){.ala-launch-orbit,.ala-launch-orbit span{animation:none}}
+
+/* The geographic backdrop is derived from Natural Earth geography, not an
+   invented continent illustration. City badges align with the mapped
+   latitude/longitude coordinates in the static, locally hosted SVG. */
+.ala-world{display:block;width:100%;height:100%;object-fit:fill;filter:saturate(.87)}
+.ala-map{background:#d6e1e4}
+.ala-city{transform:translate(-50%,-100%);filter:drop-shadow(0 2px 3px #fff9)}
+.ala-city-left{left:20.84%;top:49.45%}
+.ala-city-right{left:86%;top:68.28%}
+.ala-city>span{border:1px solid #fffaeea8}
+.ala-map-attribution{position:absolute;right:9px;bottom:8px;z-index:2;color:#6c858d;background:#ffffffa8;backdrop-filter:blur(5px);padding:3px 5px;border-radius:5px;font-size:8px;letter-spacing:.1px}
+.ala-note{max-width:60%;bottom:12px;left:11px;font-size:12px;background:#fffff0b5;padding:3px 5px;border-radius:6px}
+@media(max-width:395px){.ala-city-left{left:20.84%;top:49.45%}.ala-city-right{left:86%;top:68.28%}.ala-city-scene{height:46px;width:46px;font-size:25px}.ala-city>span{font-size:10px;padding:4px 6px}.ala-map-attribution{font-size:7px}.ala-note{font-size:10px}}
