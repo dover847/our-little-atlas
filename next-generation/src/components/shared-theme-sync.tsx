@@ -11,7 +11,7 @@ type SharedLook = {
 const allowed = new Set(["original","rose","forest","ocean","violet","sunrise","twilight"]);
 export function SharedThemeSync() {
  useEffect(() => {
-  const shell = document.querySelector<HTMLElement>(".ala-shell, .atlas-wheel-app, .atlas-appearance-app");
+  const shell = document.querySelector<HTMLElement>(".ala-shell, .atlas-wheel-app, .atlas-appearance-app, .atlas-modern-app");
   if (!shell) return;
   let active = true;
   let inFlight = false;
