@@ -93,6 +93,7 @@ export default async function SharedSpace({
           ✳ <span>our little atlas.</span>
         </Link>
         <div>
+          <Link href="/full-atlas">Full original Atlas</Link>
           <Link href="/">Explore activities</Link>
           <form action={signOut}>
             <button>Sign out</button>
