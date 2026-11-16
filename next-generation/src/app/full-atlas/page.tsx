@@ -1,24 +1,10 @@
-import Link from "next/link";
-
-// The shell contains no private data. Authentication and membership are
-// enforced at every data endpoint, so the artwork can render instantly.
-export const dynamic = "force-static";
-export default function FullAtlas() {
-  return (
-    <div className="atlas-classic-shell">
-      <nav className="atlas-classic-bar" aria-label="Our Little Atlas navigation">
-        <Link href="/home">← Our Little Atlas home</Link>
-        <Link href="/wheel">Spin together</Link>
-        <Link href="/appearance">Appearance ✦</Link>
-        <Link href="/space">Shared writing & notifications →</Link>
-      </nav>
-      <iframe
-        src="/classic/index.html"
-        title="Our Little Atlas — complete shared experience"
-        className="atlas-classic-frame"
-        loading="eager"
-        referrerPolicy="same-origin"
-      />
-    </div>
-  );
+import { redirect } from "next/navigation";
+// Old home-screen shortcuts and existing bookmarks now enter the unified app.
+// The original legacy code remains archived at /classic/index.html as a fallback.
+export const dynamic = "force-dynamic";
+const allowed=new Set(["wheel","library","journal","weather","capsules","memories","understanding","ideas"]);
+export default async function FullAtlas({searchParams}:{searchParams:Promise<{tab?:string}>}){
+ const {tab}=await searchParams;
+ if(tab==="wheel")redirect("/wheel");
+ redirect("/atlas?tab="+(allowed.has(tab||"")?tab:"library"));
 }
