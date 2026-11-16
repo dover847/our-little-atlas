@@ -31,3 +31,9 @@
 .atlas-writing-invite{margin-top:16px}
 .atlas-writing-invite .studio-form{display:flex;flex-direction:column;gap:7px}
 @media(max-width:425px){.atlas-writing-body>.atlas-feature-panel{padding:16px 12px}.atlas-writing-body .writing-page{padding:14px}.atlas-writing-body .writing-tabs button{padding:9px}.atlas-writing-body .studio-section-head h2{font-size:22px}.atlas-writing-body .writing-body{font-size:13px}}
+
+.atlas-invitation-list{display:grid;gap:10px;margin:14px 0}
+.atlas-invitation-row{display:flex;gap:12px;justify-content:space-between;align-items:center;padding:12px;background:#fff;border:1px solid #e8dce2;border-radius:12px}
+.atlas-invitation-row strong{display:block;font-size:12px;overflow-wrap:anywhere}
+.atlas-invitation-row small{display:block;color:#977e8d;margin-top:4px}
+.atlas-invitation-row button{color:#a36c88;background:#fff1f5;border:1px solid #e9d6e0;border-radius:9px;padding:8px 11px;font-size:11px}
