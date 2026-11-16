@@ -4,6 +4,7 @@ import { createHash, randomBytes } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { notifyCompanions } from "@/lib/notifications";
 import {
   normalizedEmail,
   parseWriting,
@@ -117,6 +118,15 @@ export async function saveWriting(
         };
     }
     revalidatePath(`/space/${values.space_id}`);
+    if (values.visibility === "shared") {
+      // A successful shared save should notify the other member, but a
+      // delivery failure must never discard the author's writing.
+      try {
+        await notifyCompanions(values.space_id, user.id, id ? "updated" : "created");
+      } catch {
+        console.warn("A shared page was saved, but Web Push could not complete.");
+      }
+    }
     return {
       error: "",
       entryId: saved.id,
