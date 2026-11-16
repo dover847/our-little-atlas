@@ -1,7 +1,15 @@
-# Atlas next generation — milestones 1–2
+# Our Little Atlas — iPhone-capable preview with original features
 
-An isolated Next.js application built beside the original Atlas. This is an
-exploration and private-writing preview, **not feature parity or a production release**.
+This is the installable private web app for Danny and Mia. The original Atlas's
+entire feature interface and its verified server-side archive are available at
+`/full-atlas`. The newer shared writing studio and notification settings remain
+available at `/space`.
+
+The original Render site is still online as an independent backup. This remains
+a **preview** rather than a cutover of the original production Render service.
+
+See [the verified original data copy](../docs/classic-data-copy.md) for the
+import checksum, retained data counts, privacy rules and cutover limitations.
 
 ## Local development (PowerShell)
 
@@ -77,8 +85,8 @@ npx vercel@65.11.0 deploy --environment preview --scope my-little-atlas
 
 Do not use `--prod` or `promote`. Git-triggered deployments for the new project
 are disabled in the source config. The separate legacy Vercel and Render services
-are untouched by these commands. Vercel authentication protects previews; use
-`vercel curl` for automated checks rather than disabling deployment protection.
+are untouched by these commands. The members-only data API is protected by Supabase Auth and row-level policies.
+The original read-only backup endpoint has been removed after import.
 
 See [`../docs/status.md`](../docs/status.md) for implemented/planned boundaries,
 and [`../docs/migration.md`](../docs/migration.md) before any data work.
