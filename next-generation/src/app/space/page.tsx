@@ -29,7 +29,7 @@ export default async function Space() {
         {!error && Boolean(spaces?.length) && (
           <p style={{ margin: "18px 0 25px" }}>
             <Link className="button-dark" href="/home">✧ Open our new Atlas home</Link>
-            <p style={{ marginTop: 12 }}><Link href="/full-atlas">Open the complete original Atlas →</Link></p>
+            <p style={{ marginTop: 12 }}><Link href="/atlas">Open the complete original Atlas →</Link></p>
           </p>
         )}
         {error ? (
@@ -40,7 +40,7 @@ export default async function Space() {
           <ul>
             {spaces.map((space) => (
               <li key={space.id}>
-                <Link href={`/space/${space.id}`}>{space.name} →</Link>
+                <Link href="/atlas/writing">{space.name} →</Link>
               </li>
             ))}
           </ul>
