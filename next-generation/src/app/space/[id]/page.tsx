@@ -6,6 +6,7 @@ import { signOut } from "@/app/sign-in/actions";
 import { revokeInvitation } from "../actions";
 import { InvitationForm } from "../forms";
 import { WritingStudio } from "@/components/writing-studio";
+import { SharedAtmosphereBackground } from "@/components/shared-atmosphere-background";
 import { ActivityAndNotifications, type AtlasEvent } from "@/components/activity-notifications";
 import { uuidPattern, type Writing, type WritingRevision } from "@/lib/writing";
 
@@ -118,6 +119,7 @@ export default async function SharedSpace({
         </div>
       </header>
       <main className="private-main">
+        <SharedAtmosphereBackground />
         <Link href="/space" className="auth-back">
           <ArrowLeft size={14} />
           All my spaces
