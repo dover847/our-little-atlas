@@ -217,7 +217,7 @@ export function Atlas() {
             {night ? <Sun size={18} /> : <Moon size={18} />}
             <span>{night ? "A little daylight" : "A quieter evening"}</span>
           </button>
-          <Link className="private-link" href="/sign-in">
+          <Link className="private-link" href="/home">
             <LockKeyhole size={17} />
             Enter your private space
             <ArrowUpRight size={15} />
@@ -234,7 +234,7 @@ export function Atlas() {
           </span>
           <Link
             className="mobile-private"
-            href="/sign-in"
+            href="/home"
             aria-label="Enter your private space"
           >
             <LockKeyhole size={16} />
