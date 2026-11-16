@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Bell, BookOpen, CalendarHeart, CloudSun, Compass, Heart, Images, Leaf, Map, Menu, NotebookPen, Settings2, Sparkles, WandSparkles, Feather, Camera, ChevronRight, Orbit } from "lucide-react";
+import { Bell, BookOpen, CalendarHeart, CloudSun, Compass, Heart, Images, Leaf, Map, Menu, NotebookPen, Settings2, Camera, ChevronRight, Orbit } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { PresencePulse } from "@/components/presence-pulse";
 import "./home.css";
