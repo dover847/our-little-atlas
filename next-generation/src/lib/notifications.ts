@@ -21,6 +21,7 @@ export async function notifyCompanions(
   spaceId: string,
   actorId: string,
   change: SharedChange,
+  category?: string,
 ): Promise<void> {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -55,8 +56,8 @@ export async function notifyCompanions(
   const actorName = profile?.display_name || "Your companion";
   const verb = change === "created" ? "added" : change === "shared" ? "shared" : "updated";
   // Never put another member's private writing or page contents on a lock screen.
-  const body = `${actorName} ${verb} a shared page.`;
-  const payload = JSON.stringify({ body, url: `/space/${spaceId}#activity` });
+  const body = category ? `${actorName} updated ${category}.` : `${actorName} ${verb} a shared page.`;
+  const payload = JSON.stringify({ body, url: category ? "/full-atlas" : `/space/${spaceId}#activity` });
   webpush.setVapidDetails(
     process.env.VAPID_SUBJECT || "mailto:dover847@gmail.com",
     publicKey,
