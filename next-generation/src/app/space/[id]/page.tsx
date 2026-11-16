@@ -6,6 +6,7 @@ import { signOut } from "@/app/sign-in/actions";
 import { revokeInvitation } from "../actions";
 import { InvitationForm } from "../forms";
 import { WritingStudio } from "@/components/writing-studio";
+import { ActivityAndNotifications, type AtlasEvent } from "@/components/activity-notifications";
 import { uuidPattern, type Writing, type WritingRevision } from "@/lib/writing";
 
 export const dynamic = "force-dynamic";
@@ -29,7 +30,7 @@ export default async function SharedSpace({
   if (spaceError) throw new Error("Your space is temporarily unavailable.");
   if (!space) notFound();
   const owner = space.owner_id === user.id;
-  const [writing, invitations] = await Promise.all([
+  const [writing, invitations, activity, memberNames] = await Promise.all([
     client
       .from("writing_entries")
       .select(
@@ -48,9 +49,29 @@ export default async function SharedSpace({
           .order("created_at", { ascending: false })
           .limit(20)
       : Promise.resolve({ data: [], error: null }),
+    client
+      .from("space_activity")
+      .select("id,actor_id,action,created_at")
+      .eq("space_id", id)
+      .order("created_at", { ascending: false })
+      .limit(40),
+    client
+      .from("space_member_names")
+      .select("user_id,display_name")
+      .eq("space_id", id),
   ]);
-  if (writing.error || invitations.error)
-    throw new Error("Your pages are temporarily unavailable.");
+  if (writing.error || invitations.error || activity.error || memberNames.error)
+    throw new Error("Your space is temporarily unavailable.");
+  const namesById = new Map((memberNames.data || []).map((member) => [
+    member.user_id, member.display_name,
+  ]));
+  const recentChanges: AtlasEvent[] = (activity.data || []).map((event) => ({
+    id: event.id,
+    actorId: event.actor_id,
+    actorName: namesById.get(event.actor_id) || "Your companion",
+    action: event.action as AtlasEvent["action"],
+    createdAt: event.created_at,
+  }));
   const ownIds = (writing.data || [])
     .filter((entry) => entry.author_id === user.id)
     .map((entry) => entry.id);
@@ -96,6 +117,11 @@ export default async function SharedSpace({
           </div>
           <Sparkles size={58} strokeWidth={0.6} />
         </section>
+        <ActivityAndNotifications
+          spaceId={id}
+          userId={user.id}
+          initialEvents={recentChanges}
+        />
         <WritingStudio
           spaceId={id}
           userId={user.id}
