@@ -7,6 +7,7 @@ import { revokeInvitation } from "../actions";
 import { InvitationForm } from "../forms";
 import { WritingStudio } from "@/components/writing-studio";
 import { SharedAtmosphereBackground } from "@/components/shared-atmosphere-background";
+import { PresencePulse } from "@/components/presence-pulse";
 import { ActivityAndNotifications, type AtlasEvent } from "@/components/activity-notifications";
 import { uuidPattern, type Writing, type WritingRevision } from "@/lib/writing";
 
@@ -111,6 +112,7 @@ export default async function SharedSpace({
           ✳ <span>our little atlas.</span>
         </Link>
         <div>
+          <Link href="/home">Atlas Home</Link>
           <Link href="/full-atlas">Full original Atlas</Link>
           <Link href="/">Explore activities</Link>
           <form action={signOut}>
@@ -119,6 +121,7 @@ export default async function SharedSpace({
         </div>
       </header>
       <main className="private-main">
+        <PresencePulse spaceId={id} quiet />
         <SharedAtmosphereBackground />
         <Link href="/space" className="auth-back">
           <ArrowLeft size={14} />
