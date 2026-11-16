@@ -2275,3 +2275,39 @@ select option {
   .atlas-activity-card { grid-template-columns: 1fr; gap: 15px; }
   .atlas-activity-pane, .atlas-notifications { padding: 20px; }
 }
+
+/* Full original atlas, safely hosted inside individual-account app. */
+.atlas-classic-shell {
+  width: 100%;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: #13232b;
+}
+.atlas-classic-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  flex: 0 0 auto;
+  min-height: 57px;
+  padding: 12px max(18px, env(safe-area-inset-left));
+  padding-top: max(12px, env(safe-area-inset-top));
+  color: #f4f0e7;
+  background: #13232b;
+  font-size: 12px;
+  letter-spacing: .3px;
+  border-bottom: 1px solid #ffffff28;
+}
+.atlas-classic-bar a { color: #e2c393; text-align: right; }
+.atlas-classic-frame {
+  display: block;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  border: 0;
+  background: #13232b;
+}
+@media(max-width:570px) {
+  .atlas-classic-bar { font-size: 11px; padding-left: 15px; padding-right: 15px; }
+}
