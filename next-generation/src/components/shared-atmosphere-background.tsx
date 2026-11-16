@@ -55,5 +55,5 @@ export function SharedAtmosphereBackground() {
       window.removeEventListener("focus",focus);
     };
   },[]);
-  return <p className="shared-atmosphere-caption" aria-live="polite">{caption} · Change it together in <a href="/full-atlas">Full Atlas</a></p>;
+  return <p className="shared-atmosphere-caption" aria-live="polite">{caption} · Change it together in <a href="/appearance">Full Atlas</a></p>;
 }
