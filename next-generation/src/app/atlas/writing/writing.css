@@ -1,0 +1,33 @@
+.atlas-writing-page{--ink:#473a49;--muted:#887383;--paper:#fffaf9;--line:#eadde2;--sage:#f6e4e9}
+.atlas-writing-body>.atlas-feature-panel{padding:20px 18px}
+.atlas-writing-body .writing-studio{padding:2px 0 14px}
+.atlas-writing-body .studio-section-head{align-items:start;flex-wrap:wrap;gap:17px}
+.atlas-writing-body .studio-section-head h2{font:italic 25px/1.2 Georgia,serif;margin:8px 0}
+.atlas-writing-body .studio-section-head h2 em{color:var(--atlas-accent)}
+.atlas-writing-body .eyebrow{font-size:9px;letter-spacing:1.7px;color:#ac8497}
+.atlas-writing-body .button-dark{background:var(--atlas-accent);color:#fff;border-radius:12px;min-height:43px;padding:12px 14px}
+.atlas-writing-body .writing-tabs{gap:6px;margin:16px 0;display:flex;flex-wrap:wrap}
+.atlas-writing-body .writing-tabs button{border-radius:12px;background:#fff4f7;color:#8d6d7d;border:1px solid #ebdfe1;font-size:10px;padding:10px 11px}
+.atlas-writing-body .writing-tabs button[aria-pressed="true"]{background:var(--atlas-accent);border-color:var(--atlas-accent);color:white}
+.atlas-writing-body .writing-pages{gap:12px}
+.atlas-writing-body .writing-page{border-radius:16px;padding:18px;background:#fffefc;border-color:#ece0e3;box-shadow:0 2px 9px #80657a15}
+.atlas-writing-body .writing-page h3{font:italic 24px Georgia,serif;margin:16px 0 9px;color:#66485f}
+.atlas-writing-body .writing-body{font:14px/1.85 Georgia,serif;color:#564454}
+.atlas-writing-body .writing-meta{flex-wrap:wrap;gap:9px;font-size:10px}
+.atlas-writing-body .writing-page-bottom{gap:12px;flex-wrap:wrap;margin-top:14px}
+.atlas-writing-body .writing-page-bottom .text-button{color:var(--atlas-accent);font-size:11px}
+.atlas-writing-body .studio-form input:not([type=radio]):not([type=hidden]),.atlas-writing-body .studio-form textarea,.atlas-writing-body .studio-form select{border:1px solid #decbd5;border-radius:11px;background:#fffdfa;color:#544555;padding:12px}
+.atlas-writing-body .studio-form fieldset{border:1px solid #e8dbe1;border-radius:13px}
+.atlas-writing-body .writing-composer{background:#fff7f8;padding:15px;border-radius:15px;border:1px solid #eadee4;margin-top:15px}
+.atlas-writing-body .revision-history{margin-top:17px}
+.atlas-writing-body .revision-history section{border-top:1px solid #ecdfe4;padding-top:15px;margin-top:15px}
+.atlas-writing-activity{scroll-margin-top:110px}
+.atlas-writing-activity .atlas-activity-grid{display:grid;grid-template-columns:1fr;gap:14px}
+.atlas-writing-activity .atlas-activity-pane,.atlas-writing-activity .atlas-notifications{background:#fffdfb;border-color:#eadde3;border-radius:14px;padding:16px}
+.atlas-writing-activity .atlas-activity-pane h2{font:italic 21px Georgia,serif;color:#5c4557}
+.atlas-writing-activity .atlas-notifications h3{font:italic 19px Georgia,serif}
+.atlas-writing-activity .atlas-activity-pane .text-button{color:var(--atlas-accent)}
+.atlas-writing-invitations>summary{cursor:pointer;color:#8e647c;font:italic 18px Georgia,serif}
+.atlas-writing-invite{margin-top:16px}
+.atlas-writing-invite .studio-form{display:flex;flex-direction:column;gap:7px}
+@media(max-width:425px){.atlas-writing-body>.atlas-feature-panel{padding:16px 12px}.atlas-writing-body .writing-page{padding:14px}.atlas-writing-body .writing-tabs button{padding:9px}.atlas-writing-body .studio-section-head h2{font-size:22px}.atlas-writing-body .writing-body{font-size:13px}}
