@@ -47,3 +47,85 @@ body[data-atlas-theme="violet"]{background:radial-gradient(ellipse at top left,#
 .atlas-theme-picker input[type=file]{width:min(100%,240px);font-size:12px}.atlas-theme-picker button{width:auto;padding:9px 12px;font-size:12px}.atlas-theme-picker label{margin:0}.atlas-theme-picker small{width:100%}
 
 [hidden]{display:none!important}
+
+
+/* A single synchronized atmosphere belongs to both signed-in members. */
+body[data-atlas-theme="sunrise"] {
+  background:radial-gradient(ellipse at 20% 0%,#8c6548 0%,#3b3243 47%,#182735 100%) fixed;
+}
+body[data-atlas-theme="twilight"] {
+  background:radial-gradient(ellipse at 20% 0%,#355777 0%,#283c58 49%,#141c33 100%) fixed;
+}
+.atlas-shared-customizer {
+  display:block;
+  background:rgba(12,27,34,.72);
+  border:1px solid color-mix(in srgb,var(--gold) 40%,transparent);
+  border-radius:15px;
+  padding:18px;
+  margin:0 0 24px;
+  backdrop-filter:blur(16px);
+  max-width:940px;
+  font-size:13px;
+}
+.atlas-customizer-heading {
+  display:flex;
+  flex-wrap:wrap;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:15px;
+}
+.atlas-customizer-heading strong {
+  font-family:Georgia,serif;
+  font-weight:400;
+  font-size:20px;
+  letter-spacing:.01em;
+  color:var(--gold);
+}
+.atlas-customizer-heading span {font-size:11px}
+.atlas-shared-grid {display:flex;gap:14px;flex-wrap:wrap;align-items:end}
+.atlas-shared-grid label {
+  display:flex;
+  flex-direction:column;
+  align-items:start;
+  gap:7px;
+  flex:1 1 170px;
+  font-size:12px;
+  line-height:1.4;
+}
+.atlas-shared-grid label select,
+.atlas-shared-grid input[type=file] {
+  box-sizing:border-box;
+  width:100%;
+  max-width:100%;
+  min-height:42px;
+  font-size:12px;
+}
+.atlas-shared-grid input[type=color]{
+  width:95px;
+  height:43px;
+  border-radius:9px;
+  cursor:pointer;
+}
+.atlas-shared-actions {display:flex;flex-wrap:wrap;gap:9px;margin:15px 0 10px}
+.atlas-shared-actions button {
+  width:auto;
+  min-height:43px;
+  padding:9px 14px;
+  font-size:12px;
+  border:1px solid color-mix(in srgb,var(--gold) 42%,transparent);
+  border-radius:8px;
+}
+.atlas-shared-actions button.primary {background:var(--gold);color:#12212a}
+.atlas-shared-customizer small {
+  display:block;
+  font:11px/1.65 system-ui,sans-serif;
+  color:#cbd3d4;
+}
+#atlasUsage {margin-top:8px;color:var(--gold)}
+@media(max-width:570px){
+  .atlas-shared-customizer{padding:15px}
+  .atlas-shared-grid{gap:12px}
+  .atlas-shared-grid label{flex-basis:140px}
+  .atlas-shared-actions button{flex-grow:1}
+}
