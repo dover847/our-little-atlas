@@ -30,7 +30,7 @@ export default async function SharedSpace({
   if (spaceError) throw new Error("Your space is temporarily unavailable.");
   if (!space) notFound();
   const owner = space.owner_id === user.id;
-  const [writing, invitations, activity, memberNames] = await Promise.all([
+  const [writing, invitations, activity, memberNames, classicActivity] = await Promise.all([
     client
       .from("writing_entries")
       .select(
@@ -59,19 +59,36 @@ export default async function SharedSpace({
       .from("space_member_names")
       .select("user_id,display_name")
       .eq("space_id", id),
+    client
+      .from("atlas_legacy_activity")
+      .select("id,actor_id,category,created_at")
+      .eq("space_id",id)
+      .order("created_at",{ascending:false})
+      .limit(40),
   ]);
-  if (writing.error || invitations.error || activity.error || memberNames.error)
+  if (writing.error || invitations.error || activity.error || memberNames.error || classicActivity.error)
     throw new Error("Your space is temporarily unavailable.");
   const namesById = new Map((memberNames.data || []).map((member) => [
     member.user_id, member.display_name,
   ]));
-  const recentChanges: AtlasEvent[] = (activity.data || []).map((event) => ({
+  const writingChanges: AtlasEvent[] = (activity.data || []).map((event) => ({
     id: event.id,
     actorId: event.actor_id,
     actorName: namesById.get(event.actor_id) || "Your companion",
     action: event.action as AtlasEvent["action"],
     createdAt: event.created_at,
   }));
+  const classicChanges: AtlasEvent[] = (classicActivity.data || []).map((event) => ({
+    id: event.id,
+    actorId: event.actor_id,
+    actorName: namesById.get(event.actor_id) || "Your companion",
+    action: "updated",
+    category: event.category,
+    createdAt: event.created_at,
+  }));
+  const recentChanges = [...writingChanges,...classicChanges]
+    .sort((a,b)=>Date.parse(b.createdAt)-Date.parse(a.createdAt))
+    .slice(0,40);
   const ownIds = (writing.data || [])
     .filter((entry) => entry.author_id === user.id)
     .map((entry) => entry.id);
