@@ -119,6 +119,7 @@ export async function saveWriting(
         };
     }
     revalidatePath(`/space/${values.space_id}`);
+    revalidatePath("/atlas/writing");
     if (values.visibility === "shared") {
       // A successful shared save should notify the other member, but a
       // delivery failure must never discard the author's writing.
@@ -170,6 +171,7 @@ export async function createInvitation(
           "Only the space owner can create invitations. If you have created many today, try again tomorrow.",
       };
     revalidatePath(`/space/${spaceId}`);
+    revalidatePath("/atlas/writing");
     return {
       error: "",
       invitation: token,
@@ -221,6 +223,7 @@ export async function revokeInvitation(form: FormData) {
   });
   if (error) return;
   revalidatePath(`/space/${spaceId}`);
+    revalidatePath("/atlas/writing");
 }
 
 export async function acceptEmailInvitation(
