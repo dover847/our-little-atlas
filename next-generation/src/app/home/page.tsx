@@ -53,9 +53,9 @@ export default async function AtlasHome() {
       <SharedThemeSync/>
       <div className="ala-petals" aria-hidden="true"><span>✿</span><span>✿</span><span>✿</span></div>
       <header className="ala-header">
-        <Link href={"/space/" + spaceId} className="ala-menu" aria-label="Open your shared space"><Menu size={21} /></Link>
+        <Link href="/atlas/writing" className="ala-menu" aria-label="Open your shared space"><Menu size={21} /></Link>
         <div className="ala-brand"><span>Our Little Atlas</span><Compass size={19} aria-hidden="true" /></div>
-        <div className="ala-header-tools"><Link href={"/space/" + spaceId} className="ala-bell" aria-label="Open notifications"><Bell size={20}/><span /></Link><Link href="/appearance" className="ala-settings" aria-label="Customize color themes and backgrounds"><Settings2 size={20}/></Link></div>
+        <div className="ala-header-tools"><Link href="/atlas/writing" className="ala-bell" aria-label="Open notifications"><Bell size={20}/><span /></Link><Link href="/appearance" className="ala-settings" aria-label="Customize color themes and backgrounds"><Settings2 size={20}/></Link></div>
       </header>
       <main>
         <section className="ala-journey" id="journey" aria-label="Our journey between Jerusalem and Shenzhen">
@@ -83,13 +83,13 @@ export default async function AtlasHome() {
         <section className="ala-presence-card" aria-label="Our online status">
           <div className="ala-profile-pair" aria-hidden="true"><span>D</span><span>♡</span><span>M</span></div>
           <div className="ala-status-copy"><strong>Our shared rhythm ♡</strong><PresencePulse spaceId={spaceId}/></div>
-          <Link href={"/space/" + spaceId} className="ala-presence-more" aria-label="Open our shared writing and notifications"><ChevronRight size={20}/></Link>
+          <Link href="/atlas/writing" className="ala-presence-more" aria-label="Open our shared writing and notifications"><ChevronRight size={20}/></Link>
         </section>
 
         <section className="ala-features" aria-label="Our shared Atlas features">
           <div className="ala-feature-grid">
             {tiles.map(({title,icon:Icon,tab,color})=>(
-              <Link key={title} href={tab==="wheel"?"/wheel":"/full-atlas?tab=" + tab} className={"ala-tile ala-" + color}>
+              <Link key={title} href={tab==="wheel"?"/wheel":"/atlas?tab=" + tab} className={"ala-tile ala-" + color}>
                 <Icon size={26} strokeWidth={1.6} aria-hidden="true"/><span>{title}</span>
               </Link>
             ))}
@@ -99,11 +99,11 @@ export default async function AtlasHome() {
         <section className="ala-mood">
           <div className="ala-moon" aria-hidden="true">☽</div>
           <div><h2>Our Current Mood ♡</h2><p>Two little weather systems, one shared sky.</p></div>
-          <Link href="/full-atlas?tab=weather" className="ala-mood-button">See our weather <ChevronRight size={15}/></Link>
+          <Link href="/atlas?tab=weather" className="ala-mood-button">See our weather <ChevronRight size={15}/></Link>
         </section>
 
         <section className="ala-recent">
-          <div className="ala-section-header"><h2>Recently Together</h2><Link href={"/space/" + spaceId}>See all <ChevronRight size={15}/></Link></div>
+          <div className="ala-section-header"><h2>Recently Together</h2><Link href="/atlas/writing">See all <ChevronRight size={15}/></Link></div>
           <Link className="ala-recent-card" href={recentHref}>
             <div className="ala-recent-symbol"><BookOpen size={26} strokeWidth={1.3}/></div>
             <div><strong>{recentTitle}</strong><p>{recentDetail}</p></div>
@@ -115,11 +115,11 @@ export default async function AtlasHome() {
       </main>
       <nav className="ala-bottom" aria-label="Mobile app navigation">
         <Link className="ala-selected" href="/home"><span>⌂</span>Home</Link>
-        <Link href="/full-atlas?tab=journal"><BookOpen size={20}/>Journal</Link>
+        <Link href="/atlas?tab=journal"><BookOpen size={20}/>Journal</Link>
         <Link href="#journey"><Map size={20}/>Map</Link>
-        <Link href="/full-atlas?tab=memories"><Images size={20}/>Gallery</Link>
+        <Link href="/atlas?tab=memories"><Images size={20}/>Gallery</Link>
         <Link href="/wheel"><Orbit size={20}/>Wheel</Link>
-        <Link href={"/space/" + spaceId}><Menu size={20}/>More</Link>
+        <Link href="/atlas/writing"><Menu size={20}/>More</Link>
       </nav>
     </div>
   );
