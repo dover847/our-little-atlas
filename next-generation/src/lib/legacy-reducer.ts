@@ -69,7 +69,12 @@ export function updateLegacy(
         ? body.ids.map(Number).filter(n=>activities.some(a=>a.id===n))
         : activities.map(a=>a.id);
       if (!valid.length) fail("No activities selected");
-      const id=valid[randomInt(valid.length)];
+      // Avoid recently selected adventures where the remaining pool allows it.
+      const recent = new Set(list(state,"spins").slice(0,Math.min(5,valid.length-1))
+        .map(item=>Number(item.id)));
+      const fresh = valid.filter(id=>!recent.has(id));
+      const choices=fresh.length ? fresh : valid;
+      const id=choices[randomInt(choices.length)];
       state.selected=id;
       list(state,"spins").unshift({id,who,at:iso()});
       state.spins=state.spins.slice(0,100);
@@ -115,6 +120,17 @@ export function updateLegacy(
         type,title:nonempty(body.title,120),mood:nonempty(body.mood,60),
         text,activity:Number.isInteger(activity)&&activity>0?activity:null,
       }));
+      category="the shared journal";break;
+    }
+    case "journal-comment": {
+      const item=list(state,"journal")
+        .find(entry=>String(entry.id)===String(body.id||""));
+      const text=nonempty(body.text,1200);
+      if(!item||!text)fail("Choose a journal entry and write a reply");
+      item.comments ||= [];
+      if(!Array.isArray(item.comments)||item.comments.length>=150)
+        fail("The reply limit for this entry was reached");
+      item.comments.push(newEntry({text}));
       category="the shared journal";break;
     }
     case "assumption": {
