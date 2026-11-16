@@ -163,7 +163,7 @@ export function SharedWheel({spaceId}:{spaceId:string}){
     <span>✦ OUR NEXT ADVENTURE</span>
     <h2>{result.title}</h2>
     <p>{result.description}</p>
-    <Link href={"/atlas?tab=library&activity="+selected.id}>Open in our Atlas <ChevronRight size={17}/></Link>
+    <Link href={"/atlas?tab=library&activity="+result.id}>Open in our Atlas <ChevronRight size={17}/></Link>
    </div>}
    <div className="wheel-shortcuts">
     <Link href="/atlas?tab=library"><NotebookPen size={24}/><span>Shared<br/>Notes</span></Link>
