@@ -121,3 +121,11 @@
 .ala-mood-button{border:1px solid color-mix(in srgb,var(--atlas-accent) 35%,transparent)}
 .ala-personalize a{border-color:var(--atlas-accent);color:var(--atlas-accent)}
 @media(max-width:395px){.ala-header-tools{gap:5px}.ala-settings,.ala-bell{width:35px;height:35px}.ala-brand>span{font-size:21px}.ala-menu{width:35px;height:35px}}
+
+/* Reuse the actual member-owned photographs in the shared-rhythm strip. */
+.ala-profile-pair{gap:0;align-items:center;flex-shrink:0}
+.ala-profile-slot{height:40px;width:40px;flex:none;display:grid;place-items:center;border:2px solid #fff;border-radius:50%;overflow:hidden;box-shadow:0 2px 7px #92728431;background:#e7ceda;color:#71566b;font:italic 17px Georgia,serif}
+.ala-profile-slot:last-child{background:#f0d5ca}
+.ala-profile-slot img{height:100%;width:100%;object-fit:cover;display:block}
+.ala-profile-pair .ala-profile-slot span{display:grid;place-items:center;height:100%;width:100%;border:0;border-radius:0;box-shadow:none;background:transparent;font:italic 17px Georgia,serif;color:#70556d;margin:0}
+.ala-profile-pair .ala-between-heart{display:block;width:auto;height:auto;font:normal 16px Georgia,serif;background:none;border:0;border-radius:0;box-shadow:none;color:#c9879d;margin:0 3px}
