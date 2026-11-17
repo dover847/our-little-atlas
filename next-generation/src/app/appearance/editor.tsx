@@ -20,7 +20,7 @@ const presets = [
 ] as const;
 
 async function shrinkPhoto(file:File):Promise<File>{
- if(file.size<=1100000)return file;
+ if(file.size<=1100000&&["image/jpeg","image/png","image/webp"].includes(file.type))return file;
  const bitmap=await createImageBitmap(file);
  const max=1700,scale=Math.min(1,max/Math.max(bitmap.width,bitmap.height));
  const canvas=document.createElement("canvas");
@@ -146,7 +146,7 @@ export function AppearanceEditor(){
       <ImagePlus size={26}/>
       <span>{upload?upload.name:"Choose a photo from your phone"}</span>
       <small>JPG, PNG, or WebP · large pictures are compressed first</small>
-      <input id="atlas-upload-background" type="file" accept="image/jpeg,image/png,image/webp" onChange={changeFile}/>
+      <input id="atlas-upload-background" type="file" accept="image/*" onChange={changeFile}/>
      </label>
      {background&&<button className="app-remove-photo" type="button" onClick={()=>void apply(true)} disabled={busy}><Trash2 size={16}/> Remove current shared photo</button>}
     </section>
