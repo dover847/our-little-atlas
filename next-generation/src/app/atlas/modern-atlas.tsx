@@ -33,7 +33,7 @@ function formatDate(value:unknown){
  return Number.isNaN(date.valueOf())?"":date.toLocaleString([],{month:"short",day:"numeric",hour:"2-digit",minute:"2-digit"});
 }
 async function capsulePhoto(file:File):Promise<string>{
- if(!["image/jpeg","image/png","image/webp"].includes(file.type))throw Error("Please choose a JPG, PNG or WebP photo.");
+ if(file.type&&!file.type.startsWith("image/"))throw Error("Please choose a photograph.");
  if(file.size>20_000_000)throw Error("This photograph is too large.");
  const image=await createImageBitmap(file);
  const maxSide=600,scale=Math.min(1,maxSide/Math.max(image.width,image.height));
@@ -286,7 +286,7 @@ export function ModernAtlas({spaceId,initialTab,initialActivity}:{
       <label>Open on<input name="openAt" type="datetime-local" required/></label></div>
     <label>Title<input name="title" required maxLength={120} placeholder="A gift to the future"/></label>
     <label>Your message<textarea name="message" rows={5} required maxLength={4000} placeholder="Something worth rediscovering…"/></label>
-    <label>Optional photo<input name="photoUpload" type="file" accept="image/jpeg,image/png,image/webp"/></label>
+    <label>Optional photo<input name="photoUpload" type="file" accept="image/*"/></label>
     <small className="atlas-field-help">Photo uploads are compressed before sealing. Unopened contents stay hidden in the app.</small>
     <button disabled={busy} className="atlas-submit">Seal this time capsule <Heart size={16}/></button>
    </form>
