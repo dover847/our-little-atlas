@@ -8,6 +8,7 @@ import {
  WandSparkles, X
 } from "lucide-react";
 import { SharedThemeSync } from "@/components/shared-theme-sync";
+import { PresencePulse } from "@/components/presence-pulse";
 type Activity={id:number;title:string;category:string;description:string};
 type AtlasEntry={id:string;who:string;at:string;[key:string]:any};
 type AtlasState={
@@ -400,6 +401,7 @@ export function ModernAtlas({spaceId,initialTab,initialActivity}:{
  const current=sections.find(x=>x.id===tab)||sections[0];
  return <div className="atlas-modern-app">
   <SharedThemeSync/>
+  <PresencePulse spaceId={spaceId} quiet/>
   <header className="atlas-modern-header">
    <Link href="/home" className="atlas-modern-back" aria-label="Back to our home"><ArrowLeft size={19}/></Link>
    <div className="atlas-modern-brand"><strong>Our Little Atlas ✧</strong><small>OUR SHARED WORLD</small></div>
