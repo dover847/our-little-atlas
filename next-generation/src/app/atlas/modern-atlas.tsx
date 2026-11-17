@@ -160,6 +160,25 @@ export function ModernAtlas({spaceId,initialTab,initialActivity}:{
     <button disabled={busy||!(answerDrafts[key]||"").trim()} onClick={()=>reply(entry,action,kind)}>Send</button>
   </div>;
  }
+ function exportMemories(){
+  if(!data)return;
+  const exportable={
+   exportedAt:new Date().toISOString(),
+   writtenMemories:(data.journal||[]).filter(m=>m.type==="Memory").map(m=>({
+    id:m.id,who:m.who,at:m.at,title:m.title,text:m.text,mood:m.mood
+   })),
+   openedTimeCapsules:(data.capsules||[]).filter(c=>!c.sealed).map(c=>({
+    id:c.id,who:c.who,at:c.at,title:c.title,message:c.message,openAt:c.openAt,
+    hadPhotograph:!!c.photo
+   })),
+  };
+  const blob=new Blob([JSON.stringify(exportable,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const link=document.createElement("a");
+  link.href=url;link.download="our-little-atlas-visible-memories.json";
+  link.click();
+  URL.revokeObjectURL(url);
+ }
  const activeWeather=(person:string)=>{
   const weather=data?.weather?.[person];
   if(!weather)return null;
@@ -247,6 +266,9 @@ export function ModernAtlas({spaceId,initialTab,initialActivity}:{
     <h3>Share your own weather</h3>
     <div className="atlas-mood-options">{["☀️","🌤️","☁️","🌧️","🌈","🌙","✨","❤️","🥹","🥰","🤔","😴","😤","🫶"].map(emoji=>
      <button type="button" key={emoji} className={emoji===moodEmoji?"chosen":""} onClick={()=>setMoodEmoji(emoji)}>{emoji}</button>)}</div>
+    <div className="atlas-mood-words"><label>Or write your own emoji or expression
+     <input value={moodEmoji} onChange={e=>setMoodEmoji(e.target.value)} maxLength={16} aria-label="Your own emoji or Chinese expression" placeholder="✨ / 想你 / 抱抱"/>
+    </label><div>{["想你","抱抱","撒娇","开心","心动"].map(word=><button key={word} type="button" onClick={()=>setMoodEmoji(word)}>{word}</button>)}</div></div>
     <div className="atlas-form-row"><label>Color<input name="color" type="color" defaultValue="#b8c8bd" required/></label>
      <label>Keep this weather for<select name="duration"><option value="until">Until I change it</option><option value="2">2 hours</option><option value="8">8 hours</option><option value="24">24 hours</option></select></label>
     </div>
@@ -285,6 +307,8 @@ export function ModernAtlas({spaceId,initialTab,initialActivity}:{
   const memories=(data?.journal||[]).filter(c=>c.type==="Memory");
   return <div className="atlas-feature-panel">
     <div className="atlas-feature-heading"><Images/><div><h2>Our memory gallery</h2><p>Already-opened photographs and our written memories.</p></div></div>
+    <button type="button" className="atlas-load-more" onClick={exportMemories}>Export opened memories as JSON</button>
+    <p className="atlas-field-help">The export includes visible memories only. Keep the file private. Signed photo links aren't included because they expire.</p>
     <div className="atlas-memory-grid">{photos.map(c=><article key={c.id} className="atlas-memory-tile">
      <img src={String(c.photo)} alt={"A memory: "+c.title}/><div><strong>{c.title}</strong><small>{formatDate(c.at)}</small></div>
     </article>)}</div>
