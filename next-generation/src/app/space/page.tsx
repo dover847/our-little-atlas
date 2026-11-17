@@ -68,7 +68,7 @@ export default async function Space() {
         <Link href="/join" className="auth-back">
           Accept a private invitation →
         </Link>
-        <Link href="/" className="auth-back">
+        <Link href="/explore" className="auth-back">
           Explore the activity atlas →
         </Link>
         <form action={signOut}>
