@@ -3,6 +3,7 @@ import { ChangeEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Check, Camera, ChevronRight, Heart, ImagePlus, Palette, RefreshCcw, SlidersHorizontal, Trash2 } from "lucide-react";
 import { SharedThemeSync } from "@/components/shared-theme-sync";
+import { PresencePulse } from "@/components/presence-pulse";
 import "./appearance.css";
 
 type SharedLook = {
@@ -39,7 +40,7 @@ async function shrinkPhoto(file:File):Promise<File>{
  return new File([blob],"our-shared-background.jpg",{type:"image/jpeg"});
 }
 
-export function AppearanceEditor(){
+export function AppearanceEditor({spaceId}:{spaceId:string}){
  const [theme,setTheme]=useState("original");
  const [accent,setAccent]=useState("#c99477");
  const [background,setBackground]=useState<string|null>(null);
@@ -108,6 +109,7 @@ export function AppearanceEditor(){
  return (
   <div className="atlas-appearance-app">
    <SharedThemeSync/>
+   <PresencePulse spaceId={spaceId} quiet/>
    <header className="app-settings-bar">
     <Link href="/home" aria-label="Return to Atlas home"><ArrowLeft size={19}/></Link>
     <span>Our Little Atlas</span>
