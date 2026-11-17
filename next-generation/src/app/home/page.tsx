@@ -46,7 +46,7 @@ export default async function AtlasHome() {
     : latestEvent ? latestEvent.category : "A little room for our next discovery";
   const recentDetail = showingWriting ? "From our shared writing" :
     latestEvent ? "A shared Atlas update" : "Your shared activities will appear here";
-  const recentHref = showingWriting ? "/space/" + spaceId : "/full-atlas";
+  const recentHref = showingWriting ? "/atlas/writing" : "/atlas";
 
   return (
     <div className="ala-shell">
