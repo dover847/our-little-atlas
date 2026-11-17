@@ -4,10 +4,10 @@ const PORT=process.env.PORT||3000, PASSWORD=process.env.ATLAS_PASSWORD, SECRET=p
 if(!PASSWORD||PASSWORD.length<12){console.error('Set ATLAS_PASSWORD to a private password of at least 12 characters.');process.exit(1)}
 const activities=require('./activities.json'), DATA=process.env.DATA_FILE||path.join(__dirname,'atlas-data.json');
 let state={revision:0,selected:null,spins:[],notes:{},favorites:[],ideas:[],journal:[],customActivities:[],weather:{},capsules:[],mirrors:[],clarity:[],assumptions:[]};
-try{state={...state,...JSON.parse(fs.readFileSync(DATA,'utf8'))}}catch{}
+try{const loaded=JSON.parse(fs.readFileSync(DATA,'utf8'));if(!loaded||typeof loaded!=='object'||Array.isArray(loaded))throw Error('Invalid Atlas data format');state={...state,...loaded}}catch(err){if(err.code!=='ENOENT'){console.error('Atlas data could not be loaded; refusing to start to protect existing memories:',err.message);process.exit(1)}}
 const visibleCapsules=()=>Array.isArray(state.capsules)?state.capsules.map(x=>{const opened=Date.now()>=Date.parse(x.openAt);return opened?x:{id:x.id,who:x.who,recipient:x.recipient,mode:x.mode,openAt:x.openAt,at:x.at,sealed:true}}):[];
 const allActivities=()=>[...activities,...(Array.isArray(state.customActivities)?state.customActivities:[])];
-const save=()=>{const temp=DATA+'.tmp';fs.writeFileSync(temp,JSON.stringify(state,null,2));fs.renameSync(temp,DATA)};
+const save=()=>{const temp=DATA+'.tmp';fs.writeFileSync(temp,JSON.stringify(state,null,2));try{if(fs.existsSync(DATA))fs.copyFileSync(DATA,DATA+'.previous')}catch(err){try{fs.unlinkSync(temp)}catch{}throw err}fs.renameSync(temp,DATA)};
 const hash=x=>crypto.createHmac('sha256',SECRET).update(x).digest('hex');
 const good=(a,b)=>{const x=Buffer.from(a||''),y=Buffer.from(b||'');return x.length===y.length&&crypto.timingSafeEqual(x,y)};
 const cookie=req=>(req.headers.cookie||'').split(';').map(s=>s.trim()).find(s=>s.startsWith('atlas='))?.slice(6);

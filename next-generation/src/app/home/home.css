@@ -1,0 +1,131 @@
+.ala-shell{--ala-paper:#fffaf6;--ala-ink:#483e48;--ala-muted:#847680;--ala-rose:#e3a7af;--ala-border:#f0e5e3;background:linear-gradient(180deg,#fffefd 0%,#fcf6ef 30%,#fff8f2 100%);color:var(--ala-ink);min-height:100dvh;max-width:690px;margin:0 auto;position:relative;padding-bottom:100px;box-shadow:0 3px 36px #6c485b10;font-family:Arial,Helvetica,sans-serif}
+.ala-shell *{box-sizing:border-box}
+.ala-shell a{color:inherit;text-decoration:none}
+.ala-petals{pointer-events:none;position:absolute;top:35px;right:0;left:0;overflow:hidden;height:210px;z-index:1}
+.ala-petals span{position:absolute;color:#eab5c4;font-size:32px;opacity:.75;text-shadow:0 5px 17px #dfb6b7}
+.ala-petals span:nth-child(1){right:2%;top:0;font-size:43px;transform:rotate(15deg)}
+.ala-petals span:nth-child(2){right:12%;top:23px;font-size:24px;transform:rotate(-18deg)}
+.ala-petals span:nth-child(3){left:1%;top:115px;font-size:25px;transform:rotate(23deg);opacity:.4}
+.ala-header{height:84px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:15px 21px 8px;position:relative;z-index:2}
+.ala-menu,.ala-bell{width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:14px;background:#fff9f5df;box-shadow:0 2px 9px #ad9a961e}
+.ala-bell{position:relative}.ala-bell span{position:absolute;top:8px;right:8px;background:#ed7f92;width:7px;height:7px;border-radius:50%;border:1px solid #fff}
+.ala-brand{display:flex;justify-content:center;gap:5px;align-items:center;white-space:nowrap;min-width:0}
+.ala-brand>span{font:italic 28px/1.1 Georgia,'Times New Roman',serif;letter-spacing:-1.2px;color:#4f354c}
+.ala-brand>svg{color:#cf9b4f;flex-shrink:0}
+.ala-journey{margin:5px 18px 0;position:relative;z-index:2;border-radius:22px 22px 19px 19px;overflow:hidden;box-shadow:0 10px 24px #a99c941d;border:1px solid #e5ded3;background:#faf3e9}
+.ala-map{position:relative;height:240px;overflow:hidden;background:#e7e5e5}
+.ala-map::after{content:'';position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(ellipse at 10% 80%,#f6dfe340,transparent 50%),radial-gradient(ellipse at 90% 2%,#ffdcbc55,transparent 45%);mix-blend-mode:multiply}
+.ala-world{height:100%;width:100%;display:block;filter:saturate(.75)}
+.ala-city{position:absolute;z-index:2;display:flex;flex-direction:column;align-items:center;gap:2px;transform:translateX(-50%);font-size:11px;color:#554658;font-family:Georgia,serif}
+.ala-city-left{left:30%;top:59px}.ala-city-right{left:77%;top:59px}
+.ala-city-scene{height:54px;width:54px;border-radius:50%;display:grid;place-items:center;color:#fffdf8;font-size:30px;border:4px solid white;box-shadow:0 3px 15px #665e645e;background:linear-gradient(145deg,#f3c284 0%,#e4b0a5 35%,#8e89ad 55%,#6b92a0)}
+.ala-shenzhen{background:linear-gradient(145deg,#e5b7d0 0%,#b19ac7 35%,#819db3 60%,#e7c5a0)}
+.ala-city>span{white-space:nowrap;background:#fffaece6;border-radius:999px;padding:5px 9px;box-shadow:0 2px 7px #5b455c2a}
+.ala-note{position:absolute;bottom:12px;left:17px;font:italic 15px Georgia,serif;color:#6d5565;display:flex;align-items:center;gap:5px}
+.ala-note svg{color:#d48096}
+.ala-map-caption{display:flex;align-items:center;justify-content:center;gap:14px;padding:13px 9px 14px;text-align:center;background:linear-gradient(100deg,#fff8ef,#fff8f0,#f7edf0)}
+.ala-globe{font-size:31px;color:#c4a368}
+.ala-map-caption h1{font:italic 25px/1.15 Georgia,'Times New Roman',serif;color:#614c59;letter-spacing:-.5px}
+.ala-map-caption h1 span{color:#e2a1aa}
+.ala-map-caption p{font-size:8px;letter-spacing:1.6px;color:#947981;margin-top:5px}
+.ala-presence-card{margin:14px 19px 10px;display:flex;align-items:center;gap:12px;border:1px solid #eadcdd;background:#ffffffcf;box-shadow:0 5px 16px #b7a6a01a;border-radius:18px;padding:12px 13px;position:relative;z-index:2}
+.ala-profile-pair{flex-shrink:0;display:flex;align-items:center}
+.ala-profile-pair span:first-child,.ala-profile-pair span:last-child{height:40px;width:40px;display:grid;place-items:center;color:#674e68;font:bold 17px Georgia,serif;border-radius:50%;background:#e1cedb;border:2px solid #fff;box-shadow:0 1px 6px #947b8b40}
+.ala-profile-pair span:last-child{background:#e9c6bd}
+.ala-profile-pair span:nth-child(2){font-size:16px;margin:0 -1px;color:#cf839a}
+.ala-status-copy{min-width:0;flex:1}
+.ala-status-copy strong{font:italic 17px Georgia,serif;color:#5f475f}
+.ala-presence{display:flex;align-items:center;gap:6px;color:#91818e;margin-top:6px;line-height:1.3;font-size:11px}
+.ala-presence-dot{display:inline-block;border-radius:50%;height:8px;width:8px;background:#b9b7ba;flex:none}
+.ala-presence-dot.is-both{background:#48c968;box-shadow:0 0 0 3px #dff9e5}
+.ala-presence-more{width:24px;display:grid;place-items:center;color:#9c8797}
+.ala-features{padding:7px 16px 0}
+.ala-feature-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.ala-tile{min-width:0;display:flex;align-items:center;flex-direction:column;justify-content:center;text-align:center;gap:12px;padding:15px 5px 12px;min-height:112px;border-radius:18px;border:1px solid #ebdedde0;box-shadow:0 5px 14px #a9939721;background:#fffefbf5;font-size:11px;line-height:1.25;font-weight:600;color:#5c4a58;transition:transform .16s ease,box-shadow .16s ease}
+.ala-tile:active{transform:scale(.98)}.ala-tile:hover{box-shadow:0 7px 15px #a9939738}
+.ala-tile span{min-height:27px;display:grid;place-items:center}
+.ala-tile svg{color:#90728f}
+.ala-tile.ala-rose{background:#fff6f7}.ala-tile.ala-lilac{background:#faf6ff}.ala-tile.ala-peach{background:#fff7ed}.ala-tile.ala-butter{background:#fffaf0}.ala-tile.ala-mint{background:#f6fbf9}.ala-tile.ala-sage{background:#f5f9f2}.ala-tile.ala-blue{background:#f5f9ff}.ala-tile.ala-violet{background:#faf5fc}
+.ala-tile.ala-rose svg{color:#c48896}.ala-tile.ala-peach svg{color:#d4a45c}.ala-tile.ala-sage svg{color:#83a077}.ala-tile.ala-blue svg{color:#85a5c4}
+.ala-mood{position:relative;display:flex;align-items:center;gap:12px;margin:18px 18px 0;padding:21px 18px 20px;overflow:hidden;min-height:112px;border-radius:20px;background:linear-gradient(115deg,#6c729d,#817ba5 45%,#c5acc4 100%);color:white;box-shadow:0 8px 22px #af95b64a}
+.ala-mood:before{content:'';position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(circle at 25% 20%,#fff7cb 1px,transparent 2px),radial-gradient(circle at 75% 30%,#fff9de 1px,transparent 2px),radial-gradient(circle at 85% 72%,#fff5c0 1px,transparent 2px);background-size:50px 65px,80px 45px,73px 51px;opacity:.45}
+.ala-moon{position:relative;z-index:1;font-size:44px;color:#f8e6ae;line-height:1}
+.ala-mood>div:nth-child(2){position:relative;z-index:1;flex:1}
+.ala-mood h2{font:italic 22px Georgia,serif;margin-bottom:5px}
+.ala-mood p{font-size:10px;color:#fff3ec;line-height:1.3}
+.ala-mood-button{z-index:1;display:flex;align-items:center;gap:2px;border-radius:12px;background:#fff8f0dd;color:#5f5678!important;font-size:9px;padding:8px 8px;max-width:96px}
+.ala-recent{padding:23px 19px 0}
+.ala-section-header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.ala-section-header h2{font:italic 22px Georgia,serif;color:#5d4858}
+.ala-section-header a{display:flex;align-items:center;font-size:11px;color:#9c8090}
+.ala-recent-card{display:flex;align-items:center;gap:14px;padding:12px 13px;background:#fff;border:1px solid #ece1e0;border-radius:17px;box-shadow:0 5px 15px #a993971b}
+.ala-recent-symbol{height:52px;width:55px;border-radius:12px;background:linear-gradient(140deg,#bac7df,#e9c4d5,#f3d6ad);display:grid;place-items:center;color:#fff}
+.ala-recent-card>div:nth-child(2){flex:1;min-width:0}
+.ala-recent-card strong{display:block;font-size:12px;font-weight:600;line-height:1.4}
+.ala-recent-card p{font-size:10px;color:#a08d98;margin-top:5px}
+.ala-recent-card>svg{color:#bd9bad}
+.ala-quote{text-align:center;margin:20px 15px 4px;font:italic 16px Georgia,serif;color:#806c7f}
+.ala-personalize{text-align:center;margin:17px 12px 0;font-size:10px;color:#8b7b84}
+.ala-personalize a{display:inline-flex;align-items:center;gap:5px;border-bottom:1px solid #d0b7b4;padding-bottom:3px}
+.ala-bottom{position:fixed;z-index:20;bottom:0;left:50%;transform:translateX(-50%);width:min(100%,690px);display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:2px;padding:10px 11px max(12px,env(safe-area-inset-bottom));background:#fffdfaef;backdrop-filter:blur(16px);box-shadow:0 -8px 30px #8c71891a;border-top:1px solid #eee3e7;border-radius:19px 19px 0 0}
+.ala-bottom>a{display:flex;flex-direction:column;align-items:center;gap:4px;justify-content:center;min-height:52px;border-radius:14px;color:#826c7c;font-size:10px;line-height:1.1}
+.ala-bottom>a>span{font-size:23px;line-height:1}
+.ala-bottom>a.ala-selected{background:#f7dce4;color:#9b617b}
+.ala-bottom>a>svg{flex:none}
+.ala-shell a:focus-visible{outline:3px solid #c990aa;outline-offset:3px}
+@media (min-width:691px){.ala-shell{border-left:1px solid #efe9e6;border-right:1px solid #efe9e6}.ala-map{height:270px}}
+@media (max-width:395px){.ala-brand>span{font-size:23px}.ala-header{padding:13px 14px 6px}.ala-journey{margin:5px 12px 0}.ala-map{height:215px}.ala-city-left{left:30%;top:62px}.ala-city-right{left:75%;top:62px}.ala-map-caption h1{font-size:23px}.ala-feature-grid{gap:7px}.ala-features{padding:7px 12px 0}.ala-tile{font-size:10px;min-height:105px;border-radius:15px}.ala-presence-card{margin:13px 12px 10px}}
+@media (prefers-reduced-motion:reduce){.ala-tile{transition:none}}
+
+/* A lightweight launch state appears only during genuine server navigation. */
+.ala-launch{min-height:100dvh;max-width:690px;margin:0 auto;display:flex;align-items:center;justify-content:center;text-align:center;position:relative;overflow:hidden;color:#fff4ea;background:radial-gradient(circle at 50% 15%,#ad91b8 0%,transparent 50%),linear-gradient(155deg,#7d88aa 0%,#a5a3bc 42%,#e8b6b1 75%,#f8d4ae 100%);font-family:Georgia,serif}
+.ala-launch-flower{position:absolute;top:5%;right:-2%;font-size:150px;color:#f4c5d2;opacity:.45;transform:rotate(-20deg);pointer-events:none}
+.ala-launch-content{position:relative;z-index:1;width:100%;max-width:390px;padding:32px 24px}
+.ala-launch-brand{font:italic 50px/1.02 Georgia,serif;letter-spacing:-1.4px;text-shadow:0 3px 18px #604a7188}
+.ala-launch-brand span{font-size:33px;color:#ffe3b0}
+.ala-launch-content>p{font:normal 10px/1.9 Arial,Helvetica,sans-serif;letter-spacing:2.5px;margin:27px 0 38px}
+.ala-launch-orbit{width:110px;height:110px;border:8px solid #fff4d787;border-left-color:#f4d6a0;border-top-color:#f7a5ac;border-radius:50%;margin:0 auto 30px;display:grid;place-items:center;animation:ala-gentle-spin 2.7s linear infinite}
+.ala-launch-orbit span{font-size:37px;color:#fff8e0;animation:ala-gentle-spin 2.7s linear infinite reverse}
+.ala-launch-label{font:italic 23px Georgia,serif}
+.ala-launch-small{font:12px Arial,Helvetica,sans-serif;margin-top:12px;color:#fffcf2}
+@keyframes ala-gentle-spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.ala-launch-orbit,.ala-launch-orbit span{animation:none}}
+
+/* The geographic backdrop is derived from Natural Earth geography, not an
+   invented continent illustration. City badges align with the mapped
+   latitude/longitude coordinates in the static, locally hosted SVG. */
+.ala-world{display:block;width:100%;height:100%;object-fit:fill;filter:saturate(.87)}
+.ala-map{background:#d6e1e4}
+.ala-city{transform:translate(-50%,-100%);filter:drop-shadow(0 2px 3px #fff9)}
+.ala-city-left{left:20.84%;top:49.45%}
+.ala-city-right{left:86%;top:68.28%}
+.ala-city>span{border:1px solid #fffaeea8}
+.ala-map-attribution{position:absolute;right:9px;bottom:8px;z-index:2;color:#6c858d;background:#ffffffa8;backdrop-filter:blur(5px);padding:3px 5px;border-radius:5px;font-size:8px;letter-spacing:.1px}
+.ala-note{max-width:60%;bottom:12px;left:11px;font-size:12px;background:#fffff0b5;padding:3px 5px;border-radius:6px}
+@media(max-width:395px){.ala-city-left{left:20.84%;top:49.45%}.ala-city-right{left:86%;top:68.28%}.ala-city-scene{height:46px;width:46px;font-size:25px}.ala-city>span{font-size:10px;padding:4px 6px}.ala-map-attribution{font-size:7px}.ala-note{font-size:10px}}
+
+/* Appearance remains a shared state even on the tidy map home. The optional
+   photograph is softly washed out to keep the outer design readable. */
+.ala-shell{--atlas-accent:#c99477;--atlas-photo:none;--ala-theme-top:#fffefd;--ala-theme-bottom:#fff8f2;isolation:isolate;background:linear-gradient(180deg,var(--ala-theme-top),var(--ala-theme-bottom));}
+.ala-shell::before{content:"";position:absolute;z-index:-1;inset:0;pointer-events:none;background-image:linear-gradient(#fffefdf0,#fff8f3f4),var(--atlas-photo);background-size:cover;background-position:center;opacity:.85}
+.ala-shell[data-atlas-theme=rose]{--ala-theme-top:#fff4f7;--ala-theme-bottom:#ffeef2}
+.ala-shell[data-atlas-theme=forest]{--ala-theme-top:#f8fbf6;--ala-theme-bottom:#edf5e8}
+.ala-shell[data-atlas-theme=ocean]{--ala-theme-top:#f5fbfc;--ala-theme-bottom:#e8f4f9}
+.ala-shell[data-atlas-theme=violet]{--ala-theme-top:#faf8ff;--ala-theme-bottom:#f1eafa}
+.ala-shell[data-atlas-theme=sunrise]{--ala-theme-top:#fffaf1;--ala-theme-bottom:#fcedde}
+.ala-shell[data-atlas-theme=twilight]{--ala-theme-top:#f5f7ff;--ala-theme-bottom:#e7eafa}
+.ala-header-tools{display:flex;gap:7px;align-items:center;justify-content:flex-end}
+.ala-settings{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:14px;background:#fff9f5df;box-shadow:0 2px 9px #ad9a961e;color:var(--atlas-accent)!important}
+.ala-map-caption h1 span,.ala-note svg,.ala-globe{color:var(--atlas-accent)}
+.ala-selected,.ala-bottom>a.ala-selected{background:color-mix(in srgb,var(--atlas-accent) 18%,white);color:var(--atlas-accent)}
+.ala-mood-button{border:1px solid color-mix(in srgb,var(--atlas-accent) 35%,transparent)}
+.ala-personalize a{border-color:var(--atlas-accent);color:var(--atlas-accent)}
+@media(max-width:395px){.ala-header-tools{gap:5px}.ala-settings,.ala-bell{width:35px;height:35px}.ala-brand>span{font-size:21px}.ala-menu{width:35px;height:35px}}
+
+/* Reuse the actual member-owned photographs in the shared-rhythm strip. */
+.ala-profile-pair{gap:0;align-items:center;flex-shrink:0}
+.ala-profile-slot{height:40px;width:40px;flex:none;display:grid;place-items:center;border:2px solid #fff;border-radius:50%;overflow:hidden;box-shadow:0 2px 7px #92728431;background:#e7ceda;color:#71566b;font:italic 17px Georgia,serif}
+.ala-profile-slot:last-child{background:#f0d5ca}
+.ala-profile-slot img{height:100%;width:100%;object-fit:cover;display:block}
+.ala-profile-pair .ala-profile-slot span{display:grid;place-items:center;height:100%;width:100%;border:0;border-radius:0;box-shadow:none;background:transparent;font:italic 17px Georgia,serif;color:#70556d;margin:0}
+.ala-profile-pair .ala-between-heart{display:block;width:auto;height:auto;font:normal 16px Georgia,serif;background:none;border:0;border-radius:0;box-shadow:none;color:#c9879d;margin:0 3px}

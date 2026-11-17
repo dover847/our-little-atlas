@@ -1,0 +1,12 @@
+node_modules/
+.next/
+.vercel/
+.env*
+!.env.example
+.atlas-local/
+playwright-report/
+test-results/
+*.tsbuildinfo
+atlas-data.json*
+*.backup.json
+*.private.json
