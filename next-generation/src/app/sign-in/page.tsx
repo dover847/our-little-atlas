@@ -27,7 +27,7 @@ export default function SignIn() {
           This preview is invite-only. Your existing memories remain in the original atlas.
         </p>
         <Link href="/activate" className="auth-back">Activate an emailed account invitation →</Link><br/>
-        <Link href="/" className="auth-back">
+        <Link href="/explore" className="auth-back">
           <ArrowLeft size={14} />
           Back to exploring
         </Link>
