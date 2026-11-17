@@ -8,5 +8,5 @@ export default async function SharedAppearancePage(){
  if(!user)redirect("/sign-in");
  const {data:membership}=await client.from("space_memberships").select("space_id").eq("user_id",user.id).limit(1).maybeSingle();
  if(!membership)redirect("/space");
- return <AppearanceEditor/>;
+ return <AppearanceEditor spaceId={membership.space_id as string}/>;
 }
