@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
 import {
  ArrowLeft, Bell, BookOpen, Camera, Check, ChevronRight, CloudSun, Compass,
@@ -71,6 +71,7 @@ export function ModernAtlas({spaceId,initialTab,initialActivity}:{
  const [showCount,setShowCount]=useState(24);
  const [chosen,setChosen]=useState<number|null>(initialActivity);
  const [notesDraft,setNotesDraft]=useState("");
+ const noteOwnerKey=useRef<string|null>(null);
  const [understandingTab,setUnderstandingTab]=useState<"mirror"|"clarity"|"assumptions">("mirror");
  const [answerDrafts,setAnswerDrafts]=useState<Record<string,string>>({});
  const [moodEmoji,setMoodEmoji]=useState("✨");
@@ -101,6 +102,13 @@ export function ModernAtlas({spaceId,initialTab,initialActivity}:{
   (a.title+" "+a.description+" "+a.category).toLowerCase().includes(search.toLowerCase().trim())
  ),[activities,category,search]);
  const selected=activities.find(a=>a.id===chosen);
+ useEffect(()=>{
+  if(!data||chosen===null)return;
+  const key=data.viewer+":"+chosen;
+  if(noteOwnerKey.current===key)return;
+  noteOwnerKey.current=key;
+  setNotesDraft(data.notes?.[String(chosen)]?.[data.viewer]||"");
+ },[data,chosen]);
  async function perform(action:string,body:Record<string,unknown>,form?:HTMLFormElement){
   if(busy)return false;
   setBusy(true);setMessage("");
@@ -139,9 +147,10 @@ export function ModernAtlas({spaceId,initialTab,initialActivity}:{
   await perform(action,fields,form);
  }
  function openActivity(a:Activity){
+  noteOwnerKey.current=null;
   setChosen(a.id);setNotesDraft(data?.notes?.[String(a.id)]?.[data.viewer]||"");
  }
- function closeActivity(){setChosen(null);setNotesDraft("");}
+ function closeActivity(){noteOwnerKey.current=null;setChosen(null);setNotesDraft("");}
  function reply(entry:AtlasEntry,action:"journal-comment"|"clarity-reply"|"mirror-answer",kind?:string){
   const key=entry.id+(kind||"");
   const value=answerDrafts[key]||"";
