@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 test("browse, favorite, persist preference and open a keyboard-accessible activity", async ({
   page,
 }) => {
-  await page.goto("/");
+  await page.goto("/explore");
   await expect(
     page.getByRole("heading", { name: /Two curious minds/ }),
   ).toBeVisible();
@@ -55,7 +55,7 @@ test("server-confirmed spin, errors, and recovery respect reduced motion", async
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/");
+  await page.goto("/explore");
   await page
     .getByLabel("What are you in the mood for?")
     .selectOption({ index: 1 });
@@ -105,7 +105,7 @@ test("public exploration cannot read private spaces or use legacy identity spoof
 test("reflection library and empty search provide working paths back", async ({
   page,
 }) => {
-  await page.goto("/");
+  await page.goto("/explore");
   await page
     .getByRole("button", { name: "A little wisdom", exact: true })
     .click();
