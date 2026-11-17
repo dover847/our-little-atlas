@@ -60,6 +60,17 @@ export function ProfilePair(){
   }catch(error){setMessage(error instanceof Error?error.message:"Could not use that photo");}
   finally{setUploading(false);if(input.current)input.current.value="";}
  }
+ async function removePhoto(){
+  if(uploading)return;
+  setUploading(true);setMessage("");
+  try{
+   const response=await fetch("/api/profile-photos",{method:"DELETE",credentials:"same-origin"});
+   if(!response.ok){const value=await response.json();throw Error(value.error||"Could not remove your photo.");}
+   await load();setMessage("Your photograph was removed from our shared wheel.");
+  }catch(error){setMessage(error instanceof Error?error.message:"Could not remove your photo.");}
+  finally{setUploading(false);}
+ }
+ const mine=profiles.find(p=>p.isMe);
  const own=profiles.find(p=>p.role==="owner");
  const other=profiles.find(p=>p.role!=="owner");
  const list=[own||{userId:"owner",name:"Danny",role:"owner",isMe:false,photoUrl:null,updatedAt:null},other||{userId:"companion",name:"Mia",role:"companion",isMe:false,photoUrl:null,updatedAt:null}];
@@ -83,6 +94,8 @@ export function ProfilePair(){
     },[])}
   </div>
   <input ref={input} type="file" accept="image/*" style={{display:"none"}} onChange={choose} aria-label="Select your profile picture"/>
-  <div className="wheel-photo-help" role="status">{message||"Tap your own portrait to change it · visible to both"}</div>
+  <div className="wheel-photo-help" role="status">{message||"Tap your own portrait to change it · visible to both"}
+    {mine?.photoUrl&&<button type="button" disabled={uploading} onClick={()=>void removePhoto()}>Remove my photo</button>}
+  </div>
  </>;
 }
