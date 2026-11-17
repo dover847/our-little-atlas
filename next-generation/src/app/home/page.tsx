@@ -4,6 +4,7 @@ import { Bell, BookOpen, CalendarHeart, CloudSun, Compass, Heart, Images, Leaf, 
 import { createClient } from "@/lib/supabase/server";
 import { PresencePulse } from "@/components/presence-pulse";
 import { SharedThemeSync } from "@/components/shared-theme-sync";
+import { SharedProfileMini } from "@/components/shared-profile-mini";
 import "./home.css";
 
 export const dynamic = "force-dynamic";
@@ -53,9 +54,9 @@ export default async function AtlasHome() {
       <SharedThemeSync/>
       <div className="ala-petals" aria-hidden="true"><span>✿</span><span>✿</span><span>✿</span></div>
       <header className="ala-header">
-        <Link href="/atlas/writing" className="ala-menu" aria-label="Open your shared space"><Menu size={21} /></Link>
+        <Link href="/atlas" className="ala-menu" aria-label="Open all Atlas features"><Menu size={21} /></Link>
         <div className="ala-brand"><span>Our Little Atlas</span><Compass size={19} aria-hidden="true" /></div>
-        <div className="ala-header-tools"><Link href="/atlas/writing" className="ala-bell" aria-label="Open notifications"><Bell size={20}/><span /></Link><Link href="/appearance" className="ala-settings" aria-label="Customize color themes and backgrounds"><Settings2 size={20}/></Link></div>
+        <div className="ala-header-tools"><Link href="/atlas/writing#activity" className="ala-bell" aria-label="Open notifications"><Bell size={20}/></Link><Link href="/appearance" className="ala-settings" aria-label="Customize color themes and backgrounds"><Settings2 size={20}/></Link></div>
       </header>
       <main>
         <section className="ala-journey" id="journey" aria-label="Our journey between Jerusalem and Shenzhen">
@@ -81,9 +82,9 @@ export default async function AtlasHome() {
         </section>
 
         <section className="ala-presence-card" aria-label="Our online status">
-          <div className="ala-profile-pair" aria-hidden="true"><span>D</span><span>♡</span><span>M</span></div>
+          <SharedProfileMini/>
           <div className="ala-status-copy"><strong>Our shared rhythm ♡</strong><PresencePulse spaceId={spaceId}/></div>
-          <Link href="/atlas/writing" className="ala-presence-more" aria-label="Open our shared writing and notifications"><ChevronRight size={20}/></Link>
+          <Link href="/atlas/writing#activity" className="ala-presence-more" aria-label="Open our shared writing and notifications"><ChevronRight size={20}/></Link>
         </section>
 
         <section className="ala-features" aria-label="Our shared Atlas features">
