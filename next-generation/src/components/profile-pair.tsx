@@ -4,7 +4,7 @@ import { Camera, ImagePlus, RefreshCw } from "lucide-react";
 
 type Profile={userId:string;name:string;role:string;isMe:boolean;photoUrl:string|null;updatedAt:string|null};
 async function preparePortrait(file:File){
- if(!["image/jpeg","image/png","image/webp"].includes(file.type))throw Error("Choose a JPG, PNG or WebP image.");
+ if(file.type&&!file.type.startsWith("image/"))throw Error("Choose a photograph from your phone.");
  if(file.size>20_000_000)throw Error("This photo is too large. Choose a smaller photo.");
  const bitmap=await createImageBitmap(file);
  const canvas=document.createElement("canvas");
@@ -82,7 +82,7 @@ export function ProfilePair(){
      acc.push(item);return acc;
     },[])}
   </div>
-  <input ref={input} type="file" accept="image/jpeg,image/png,image/webp" style={{display:"none"}} onChange={choose} aria-label="Select your profile picture"/>
+  <input ref={input} type="file" accept="image/*" style={{display:"none"}} onChange={choose} aria-label="Select your profile picture"/>
   <div className="wheel-photo-help" role="status">{message||"Tap your own portrait to change it · visible to both"}</div>
  </>;
 }
